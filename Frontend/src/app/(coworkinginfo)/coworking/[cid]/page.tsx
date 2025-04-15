@@ -1,14 +1,7 @@
 import Image from 'next/image'
 import getCoworking from '@/libs/getCoworking'
 import Link from 'next/link'
-
-function getDirectGoogleDriveUrl(url: string): string {
-    const match = url.match(/\/file\/d\/([^/]+)/);
-    if (match && match[1]) {
-      return `https://drive.google.com/uc?id=${match[1]}`;
-    }
-    return url; // fallback to original if no match
-}
+import getDirectGoogleDriveUrl from '@/libs/getDirectGoogleDriveUrl'
 
 export default async function CardDetailPage({params} : {params : {cid : string}}) {
     const coworkingDetail = await getCoworking(params.cid)

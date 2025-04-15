@@ -2,14 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Card from "./Card";
-
-function getDirectGoogleDriveUrl(url: string): string {
-  const match = url.match(/\/file\/d\/([^/]+)/);
-  if (match && match[1]) {
-    return `https://drive.google.com/uc?id=${match[1]}`;
-  }
-  return url; // fallback to original if no match
-}
+import getDirectGoogleDriveUrl from "@/libs/getDirectGoogleDriveUrl";
 
 export default function CoworkingCatalog() {
   const [coworkingData, setCoworkingData] = useState<any>(null);
