@@ -6,6 +6,13 @@ const BannedSchema=new mongoose.Schema({
         type : mongoose.Schema.ObjectId,
         ref : 'User',
         required:true
+    },
+    reason : {
+        type : String,
+        required : [true,'Please provide the reason']
+    },
+    unbanDate : {
+        type : Date
     }
 });
 
