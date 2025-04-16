@@ -28,13 +28,9 @@
     tel : {
         type : String
     },
-    open : {
+    time : {
         type : String,
-        required : [true,'Please add open time']
-    },
-    close : {
-        type : String,
-        requied : [true,'Pleaase add closing time']
+        required : [true,'Please add open-close time']
     }
  }, {
     toJSON : {virtuals:true},
