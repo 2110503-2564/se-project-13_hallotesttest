@@ -26,7 +26,7 @@ export default function BanUserPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [submittingUserId, setSubmittingUserId] = useState<string | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -59,23 +59,20 @@ export default function BanUserPage() {
 
   useEffect(() => {
     if (status === "loading") return;
-
     if (status === "unauthenticated" || session?.user.role !== "admin") {
       router.push("/");
       return;
     }
-
     fetchData();
   }, [session, status, router]);
 
   const handleBanUser = async (userId: string) => {
-    setSubmitting(true);
+    setSubmittingUserId(userId);
     setError(null);
     try {
       if (!session?.user?.token) {
         throw new Error("No token found in session");
       }
-
       await banUser(userId, session.user.token);
       await fetchData(); // Re-fetch user list to update UI
     } catch (err: any) {
@@ -83,12 +80,12 @@ export default function BanUserPage() {
       setError(err.message || "Failed to ban user");
       alert(err.message || "Failed to ban user");
     } finally {
-      setSubmitting(false);
+      setSubmittingUserId(null);
     }
   };
 
   const handleUnbanUser = async (userId: string) => {
-    setSubmitting(true);
+    setSubmittingUserId(userId);
     setError(null);
     try {
       if (!session?.user?.token) {
@@ -102,7 +99,7 @@ export default function BanUserPage() {
       setError(err.message || "Failed to unban user");
       alert(err.message || "Failed to unban user");
     } finally {
-      setSubmitting(false);
+      setSubmittingUserId(null);
     }
   };
 
@@ -113,6 +110,8 @@ export default function BanUserPage() {
           user.email?.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
+
+
 
   if (loading) {
     return (
@@ -185,23 +184,23 @@ export default function BanUserPage() {
                 <td className="py-2 px-4 border-b border-purple-200 text-center">
                   {!bannedUserIds.includes(user._id) ? (
                     <button
-                      disabled={submitting}
+                      disabled={submittingUserId !== null && submittingUserId !== user._id || submittingUserId === user._id}
                       className={`bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded ${
-                        submitting ? "opacity-50 cursor-not-allowed" : ""
+                        submittingUserId !== user._id && submittingUserId !== null ? "opacity-50 cursor-not-allowed" : ""
                       }`}
                       onClick={() => handleBanUser(user._id)}
                     >
-                      {submitting ? "Banning..." : "Ban"}
+                      {submittingUserId === user._id ? "Banning..." : "Ban"}
                     </button>
                   ) : (
                     <button
-                      disabled={submitting}
+                      disabled={submittingUserId !== null && submittingUserId !== user._id || submittingUserId === user._id}
                       className={`bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded ${
-                        submitting ? "opacity-50 cursor-not-allowed" : ""
+                        submittingUserId !== user._id && submittingUserId !== null || submittingUserId === user._id ? "opacity-50 cursor-not-allowed" : ""
                       }`}
                       onClick={() => handleUnbanUser(user._id)}
                     >
-                      {submitting ? "Unbanning..." : "Unban"}
+                      {submittingUserId === user._id ? "Unbanning..." : "Unban"}
                     </button>
                   )}
                 </td>
