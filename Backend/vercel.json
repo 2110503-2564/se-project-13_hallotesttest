@@ -7,7 +7,7 @@
       }
     ],
     "functions": {
-      "api/unban-users.js": {
+      "controllers/unban.js": {
         "schedule": "0 0 * * *"
       }
     },
