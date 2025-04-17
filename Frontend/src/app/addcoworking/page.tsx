@@ -26,8 +26,7 @@ export default function AddCoworking() {
       postalcode: "",
       tel: "",
       picture: "",
-      open: "",
-      close: "",
+      time:"",
       __v: 0,
       id: ""
     });
@@ -173,31 +172,18 @@ export default function AddCoworking() {
             />
           </div>
           <div>
-            <label htmlFor="open" className="block text-sm font-medium text-gray-700">
-              Open Time
+            <label htmlFor="time" className="block text-sm font-medium text-gray-700">
+              Available Time
             </label>
             <input 
               type="text" 
-              name="open" 
-              id="open" 
-              placeholder="Enter open time"
-              value={form.open}
+              name="time" 
+              id="time" 
+              placeholder="Enter available time (e.g. 09.00 - 18.00)"
+              value={form.time}
               onChange={handleChange}
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50"
-            />
-          </div>
-          <div>
-            <label htmlFor="close" className="block text-sm font-medium text-gray-700">
-              Closing Time
-            </label>
-            <input 
-              type="text" 
-              name="close" 
-              id="close" 
-              placeholder="Enter closing time"
-              value={form.close}
-              onChange={handleChange}
+              pattern="[0-9]{2}\.[0-9]{2} - [0-9]{2}\.[0-9]{2}"
+              title="Format: 09.00 - 18.00"
               required
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50"
             />
