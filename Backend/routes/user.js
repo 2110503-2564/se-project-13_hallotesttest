@@ -10,3 +10,4 @@ const {checkBanned} = require('../middleware/banning');
 router.route('/')
     .get(protect,checkBanned, getAllUsers)
 
+module.exports = router;
