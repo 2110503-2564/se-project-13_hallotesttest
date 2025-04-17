@@ -16,6 +16,23 @@ const banned = require('./routes/banning');
 
 dotenv.config({ path: './config/config.env' });
 
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
+
+const swaggerOptions= {
+    swaggerDefinition : {
+        openapi : '3.0.0',
+        info : {
+            title : 'Co-Working API',
+            version : '1.1.0',
+            description : 'Co-Working Space reservation API'
+        }
+    },
+    apis : ['./routes/*.js']
+}
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs));
 connectDB();
 
 const app = express();

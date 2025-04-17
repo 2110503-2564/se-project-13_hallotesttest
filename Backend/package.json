@@ -1,6 +1,6 @@
 {
-  "name": "a-4-anakaweeanda",
-  "version": "1.0.0",
+  "name": "se-13-hallotesttest",
+  "version": "1.1.0",
   "description": "[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/0yK2PP-x)",
   "main": "server.js",
   "scripts": {
@@ -22,7 +22,9 @@
     "hpp": "^0.2.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.1",
-    "newman": "^6.2.1"
+    "newman": "^6.2.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
