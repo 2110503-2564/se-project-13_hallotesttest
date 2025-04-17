@@ -1,5 +1,5 @@
 export default async function createBooking(coworkingId: string, bookingDate: string, token: string) {
-    const response = await fetch(`https://deepseekxchatgpt-backend.vercel.app/api/v1/coworkings/${coworkingId}/reservations`, {
+    const response = await fetch(`https://se13-backend.vercel.app/api/v1/coworkings/${coworkingId}/reservations`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -1,5 +1,5 @@
 export default async function getBooking(token: string) {
-    const response = await fetch("https://deepseekxchatgpt-backend.vercel.app/api/v1/reservations", {
+    const response = await fetch("https://se13-backend.vercel.app/api/v1/reservations", {
         method: "GET",
         headers: {
             authorization: `Bearer ${token}`,

@@ -2,7 +2,7 @@ export default async function createCoworkingSpace(form: CoworkingItem, token: s
   // Remove _id if it's an empty string or not needed
   const { _id, ...formData } = form;
   
-  const res = await fetch("https://deepseekxchatgpt-backend.vercel.app/api/v1/coworkings", {
+  const res = await fetch("https://se13-backend.vercel.app/api/v1/coworkings", {
     method: "POST",
     headers: { 
       "Content-Type": "application/json",
