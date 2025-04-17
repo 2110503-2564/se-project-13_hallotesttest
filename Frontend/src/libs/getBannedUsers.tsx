@@ -2,7 +2,7 @@
 export default async function getBannedUsers(token: string) {
   try {
     const response = await fetch(
-      "https://deepseekxchatgpt-backend.vercel.app/api/v1/banned",
+      "https://se13-backend.vercel.app/api/v1/banned",
       {
         //  API endpoint to fetch banned users
         method: "GET",

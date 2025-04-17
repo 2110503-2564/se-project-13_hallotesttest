@@ -1,5 +1,5 @@
 export default async function deleteBooking(reservationId: string, token: string) {
-    const response = await fetch(`https://deepseekxchatgpt-backend.vercel.app/api/v1/reservations/${reservationId}`, {
+    const response = await fetch(`https://se13-backend.vercel.app/api/v1/reservations/${reservationId}`, {
       method: "DELETE",
       headers: {
         authorization: `Bearer ${token}`

@@ -12,7 +12,7 @@ export default async function userRegister(
       role: "user" 
     };
   
-    const response = await fetch("https://deepseekxchatgpt-backend.vercel.app/api/v1/auth/register", {
+    const response = await fetch("https://se13-backend.vercel.app/api/v1/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
