@@ -19,6 +19,7 @@ dotenv.config({ path: './config/config.env' });
 
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
+const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 
 const swaggerOptions= {
     swaggerDefinition : {
@@ -37,7 +38,7 @@ connectDB();
 
 const app = express();
 //API documentation
-app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs));
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs,{ customCssUrl: CSS_URL }));
 
 app.use(express.json());
 //Sanitize Data
