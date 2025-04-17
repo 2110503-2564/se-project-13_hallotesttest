@@ -6,6 +6,11 @@
         "use": "@vercel/node"
       }
     ],
+    "functions": {
+      "api/unban-users.js": {
+        "schedule": "0 0 * * *"
+      }
+    },
     "routes": [
       {
         "src": "/api-docs/swagger-ui.css",
