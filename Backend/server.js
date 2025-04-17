@@ -32,10 +32,12 @@ const swaggerOptions= {
 }
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs));
 connectDB();
 
 const app = express();
+//API documentation
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs));
+
 app.use(express.json());
 //Sanitize Data
 app.use(mongoSanitize());
