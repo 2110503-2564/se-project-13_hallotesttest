@@ -15,8 +15,13 @@ interface User {
   createdAt: string;
   tel: string;
 }
+import BanPopup from "@/components/BanPopup";
+import UnbanPopup from "@/components/UnbanPopup";
+
+// Define a type for user object to ensure type safety
 
 export default function BanUserPage() {
+
   const { data: session, status } = useSession();
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
@@ -28,6 +33,25 @@ export default function BanUserPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [totalPages, setTotalPages] = useState(1);
+  const [showBanPopup, setShowBanPopup] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [showUnbanPopup, setShowUnbanPopup] = useState(false);
+
+  const handleBanClick = (uid:string) => {
+    setSelectedUser(uid);
+    setShowBanPopup(true);
+  };
+
+  const handleUnbanClick = (uid:string) => {
+    setSelectedUser(uid);
+    setShowUnbanPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowBanPopup(false);
+    setShowUnbanPopup(false);
+    setSelectedUser(null);
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -72,23 +96,24 @@ export default function BanUserPage() {
     fetchData();
   }, [session, status, currentPage]);
 
-  const handleBanUser = async (userId: string) => {
-    setSubmittingUserId(userId);
-    setError(null);
-    try {
-      if (!session?.user?.token) {
-        throw new Error("No token found in session");
-      }
-      await banUser(userId, session.user.token);
-      await fetchData();
-    } catch (err: any) {
-      console.error("Error banning user:", err);
-      setError(err.message || "Failed to ban user");
-      alert(err.message || "Failed to ban user");
-    } finally {
-      setSubmittingUserId(null);
-    }
-  };
+  // const handleBanUser = async (userId: string) => {
+  //   setSubmittingUserId(userId);
+  //   setError(null);
+  //   try {
+  //     if (!session?.user?.token) {
+  //       throw new Error("No token found in session");
+  //     }
+  //     await banUser(userId, session.user.token);
+  //     await fetchData(); // Re-fetch user list to update UI
+  //   } catch (err: any) {
+  //     console.error("Error banning user:", err);
+  //     setError(err.message || "Failed to ban user");
+  //     alert(err.message || "Failed to ban user");
+  //   } finally {
+  //     setSubmittingUserId(null);
+  //   }
+  // };
+
 
   const handleUnbanUser = async (userId: string) => {
     setSubmittingUserId(userId);
@@ -195,10 +220,14 @@ export default function BanUserPage() {
                           ? "opacity-50 cursor-not-allowed"
                           : ""
                       }`}
+<<<<<<< HEAD
                       onClick={(e) => {
                         e.stopPropagation();
                         handleBanUser(user._id);
                       }}
+=======
+                      onClick={(e) => {handleBanClick(user._id); e.stopPropagation();}}
+>>>>>>> 5de0f0dfe6e6a2b4a942f95aca6dac3fc1fb9bb4
                     >
                       {submittingUserId === user._id ? "Banning..." : "Ban"}
                     </button>
@@ -214,10 +243,15 @@ export default function BanUserPage() {
                           ? "opacity-50 cursor-not-allowed"
                           : ""
                       }`}
+<<<<<<< HEAD
                       onClick={(e) => {
                         e.stopPropagation();
                         handleUnbanUser(user._id);
                       }}
+=======
+
+                      onClick={(e) => {handleUnbanClick(user._id); e.stopPropagation();}}
+>>>>>>> 5de0f0dfe6e6a2b4a942f95aca6dac3fc1fb9bb4
                     >
                       {submittingUserId === user._id ? "Unbanning..." : "Unban"}
                     </button>
@@ -253,6 +287,12 @@ export default function BanUserPage() {
           Next
         </button>
       </div>
+      {showBanPopup && selectedUser && (
+        <BanPopup uid={selectedUser} onClose={handleClosePopup}  />
+      )}
+      {showUnbanPopup && selectedUser && (
+        <UnbanPopup uid={selectedUser} onClose={handleClosePopup} />
+      )}
     </div>
   );
 }
