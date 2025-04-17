@@ -13,12 +13,12 @@ const coworkings = require('./routes/coworkings');
 const reservations = require('./routes/reservations');
 const auth = require('./routes/auth');
 const banned = require('./routes/banning');
+const users = require('./routes/user');
 
 dotenv.config({ path: './config/config.env' });
 
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
-const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 
 const swaggerOptions= {
     swaggerDefinition : {
@@ -27,7 +27,12 @@ const swaggerOptions= {
             title : 'Co-Working API',
             version : '1.1.0',
             description : 'Co-Working Space reservation API'
-        }
+        },
+        servers:[
+            { 
+                url: 'http://se13-backend.vercel.app/api/v1'
+            }
+        ],
     },
     apis : ['./routes/*.js']
 }
@@ -37,7 +42,7 @@ connectDB();
 
 const app = express();
 //API documentation
-app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs,{ customCssUrl: CSS_URL }));
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs));
 
 app.use(express.json());
 //Sanitize Data
@@ -61,7 +66,9 @@ app.use(cookieParser());
 app.use('/api/v1/coworkings', coworkings);
 app.use('/api/v1/reservations', reservations);
 app.use('/api/v1/auth', auth);
+
 app.use('/api/v1/banned', banned);
+app.use('/api/v1/users', users);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, console.log('Server running in ', process.env.NODE_ENV, ' mode on port', PORT));

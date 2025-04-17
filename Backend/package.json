@@ -24,7 +24,7 @@
     "mongoose": "^8.10.1",
     "newman": "^6.2.1",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^4.3.0"
+    "swagger-ui-express": "^4.6.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
