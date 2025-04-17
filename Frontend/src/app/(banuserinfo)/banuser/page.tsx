@@ -1,4 +1,3 @@
-// BanUserPage.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -6,10 +5,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import getUsers from "@/libs/getUsers";
 import getBannedUsers from "@/libs/getBannedUsers";
-import { banUser, unbanUser } from "@/libs/banUser"; // Import both functions
-import Link from "next/link";
+import { banUser, unbanUser } from "@/libs/banUser";
 
-// Define a type for user object to ensure type safety
 interface User {
   _id: string;
   name: string;
@@ -24,10 +21,13 @@ export default function BanUserPage() {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [bannedUserIds, setBannedUserIds] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submittingUserId, setSubmittingUserId] = useState<string | null>(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchData = async () => {
     setLoading(true);
@@ -37,16 +37,20 @@ export default function BanUserPage() {
         throw new Error("No token found in session");
       }
 
-      const usersResponse = await getUsers(session.user.token);
+      const usersResponse = await getUsers(
+        session.user.token,
+        currentPage,
+        itemsPerPage
+      );
       const bannedUsersResponse = await getBannedUsers(session.user.token);
 
       setUsers(Array.isArray(usersResponse.data) ? usersResponse.data : []);
+      setTotalPages(usersResponse.totalPages || 1);
 
-      // Extract banned user IDs properly
       setBannedUserIds(
         Array.isArray(bannedUsersResponse.data)
           ? bannedUsersResponse.data.map(
-              (entry: { user: { _id: any } }) => entry.user._id
+              (entry: { user: { _id: string } }) => entry.user._id
             )
           : []
       );
@@ -65,7 +69,7 @@ export default function BanUserPage() {
       return;
     }
     fetchData();
-  }, [session, status, router]);
+  }, [session, status, currentPage]);
 
   const handleBanUser = async (userId: string) => {
     setSubmittingUserId(userId);
@@ -75,7 +79,7 @@ export default function BanUserPage() {
         throw new Error("No token found in session");
       }
       await banUser(userId, session.user.token);
-      await fetchData(); // Re-fetch user list to update UI
+      await fetchData();
     } catch (err: any) {
       console.error("Error banning user:", err);
       setError(err.message || "Failed to ban user");
@@ -94,7 +98,7 @@ export default function BanUserPage() {
       }
 
       await unbanUser(userId, session.user.token);
-      await fetchData(); // Re-fetch user list to update UI
+      await fetchData();
     } catch (err: any) {
       console.error("Error unbanning user:", err);
       setError(err.message || "Failed to unban user");
@@ -103,16 +107,6 @@ export default function BanUserPage() {
       setSubmittingUserId(null);
     }
   };
-
-  const filteredUsers = Array.isArray(users)
-    ? users.filter(
-        (user) =>
-          user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
-
-
 
   if (loading) {
     return (
@@ -132,20 +126,13 @@ export default function BanUserPage() {
         Manage Users
       </h1>
 
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Search by name or email"
-          className="shadow appearance-none border border-purple-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
       <div className="overflow-x-auto shadow-lg rounded-lg">
         <table className="min-w-full bg-white border border-purple-200">
           <thead>
             <tr className="bg-purple-100">
+              <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
+                #
+              </th>
               <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
                 Name
               </th>
@@ -164,9 +151,18 @@ export default function BanUserPage() {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user) => (
-              
-                <tr key={user._id} className="hover:bg-purple-50" onClick={(e) => {router.push(`/banuser/${user._id}`); e.stopPropagation();}}>
+            {users.map((user, index) => (
+              <tr
+                key={user._id}
+                className="hover:bg-purple-50"
+                onClick={(e) => {
+                  router.push(`/banuser/${user._id}`);
+                  e.stopPropagation();
+                }}
+              >
+                <td className="py-2 px-4 border-b border-purple-200 text-center text-gray-700">
+                  {(currentPage - 1) * itemsPerPage + index + 1}
+                </td>
                 <td className="py-2 px-4 border-b border-purple-200 text-black text-center">
                   {user.name}
                 </td>
@@ -186,32 +182,73 @@ export default function BanUserPage() {
                 <td className="py-2 px-4 border-b border-purple-200 text-center">
                   {!bannedUserIds.includes(user._id) ? (
                     <button
-                      disabled={submittingUserId !== null && submittingUserId !== user._id || submittingUserId === user._id}
+                      disabled={
+                        submittingUserId !== null &&
+                        submittingUserId !== user._id
+                      }
                       className={`bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded ${
-                        submittingUserId !== user._id && submittingUserId !== null ? "opacity-50 cursor-not-allowed" : ""
+                        submittingUserId !== user._id &&
+                        submittingUserId !== null
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
                       }`}
-                      onClick={(e) => {handleBanUser(user._id); e.stopPropagation();}}
+                      onClick={(e) => {
+                        handleBanUser(user._id);
+                        e.stopPropagation();
+                      }}
                     >
                       {submittingUserId === user._id ? "Banning..." : "Ban"}
                     </button>
                   ) : (
                     <button
-                      disabled={submittingUserId !== null && submittingUserId !== user._id || submittingUserId === user._id}
+                      disabled={
+                        submittingUserId !== null &&
+                        submittingUserId !== user._id
+                      }
                       className={`bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded ${
-                        submittingUserId !== user._id && submittingUserId !== null || submittingUserId === user._id ? "opacity-50 cursor-not-allowed" : ""
+                        submittingUserId !== user._id &&
+                        submittingUserId !== null
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
                       }`}
-                      onClick={(e) => {handleUnbanUser(user._id); e.stopPropagation();}}
+                      onClick={(e) => {
+                        handleUnbanUser(user._id);
+                        e.stopPropagation();
+                      }}
                     >
                       {submittingUserId === user._id ? "Unbanning..." : "Unban"}
                     </button>
                   )}
                 </td>
-                
               </tr>
-              
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-6 space-x-2">
+        <button
+          className="px-4 py-2 bg-purple-300 text-white rounded disabled:opacity-50"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Prev
+        </button>
+
+        <span className="px-4 py-2 text-purple-800 font-semibold">
+          Page {currentPage} of {totalPages}
+        </span>
+
+        <button
+          className="px-4 py-2 bg-purple-500 text-white rounded disabled:opacity-50"
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
