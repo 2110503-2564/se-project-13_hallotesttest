@@ -28,7 +28,12 @@ const swaggerOptions= {
             title : 'Co-Working API',
             version : '1.1.0',
             description : 'Co-Working Space reservation API'
-        }
+        },
+        servers:[
+            { 
+                url: 'http://se13-backend.vercel.app/api/v1'
+            }
+        ],
     },
     apis : ['./routes/*.js']
 }
@@ -38,7 +43,7 @@ connectDB();
 
 const app = express();
 //API documentation
-app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs,{ customCssUrl: CSS_URL }));
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs));
 
 app.use(express.json());
 //Sanitize Data
