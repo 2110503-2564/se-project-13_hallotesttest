@@ -1,5 +1,5 @@
 // @/libs/banUser.tsx
-export async function banUser(userId: string, token: string) {
+export async function banUser(userId: string, token: string, reason: string, unbanDate: string) {  
   const response = await fetch(
     `https://se13-backend.vercel.app/api/v1/banned/${userId}`,
     {
@@ -9,6 +9,10 @@ export async function banUser(userId: string, token: string) {
         "Content-Type": "application/json",
         authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify({
+        reason: reason,
+        unbanDate: unbanDate,
+      })
     }
   );
 

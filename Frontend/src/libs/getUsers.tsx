@@ -1,8 +1,7 @@
-// @/libs/getUsers.tsx
-export default async function getUsers(token: string) {
+export default async function getUsers(token: string, page = 1, limit = 10) {
   try {
     const response = await fetch(
-      "https://se13-backend.vercel.app/api/v1/users/",
+      `https://se13-backend.vercel.app/api/v1/users/?page=${page}&limit=${limit}`,
       {
         method: "GET",
         headers: {
@@ -20,8 +19,7 @@ export default async function getUsers(token: string) {
     }
 
     const data = await response.json();
-    console.log(data);
-    return data;
+    return data; // Should return { data: [], page, totalPages, total }
   } catch (error) {
     console.error("Error fetching users:", error);
     throw error;

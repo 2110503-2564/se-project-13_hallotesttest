@@ -88,3 +88,81 @@ exports.unbanUser = async (req, res, next) => {
     });
   }
 };
+// @desc    Check if a user is banned
+// @route   GET /api/v1/banned/:id/check
+// @access  Public
+exports.checkIfBanned = async (req, res, next) => {
+  try {
+    const bannedUser = await Banned.findOne({ user: req.params.id });
+
+    if (!bannedUser) {
+      return res.status(200).json({
+        success: true,
+        banned: false
+      });
+    }
+
+    // Check if temporary ban has expired
+    if (bannedUser.unbanDate && new Date() >= new Date(bannedUser.unbanDate)) {
+      await bannedUser.deleteOne();
+      return res.status(200).json({
+        success: true,
+        banned: false
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      banned: true,
+      data: {
+        reason: bannedUser.reason,
+        unbanDate: bannedUser.unbanDate
+      }
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Error checking ban status'
+    });
+  }
+};
+
+// Update banUser function to include reason and unbanDate
+exports.banUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: `User not found with id of ${req.params.id}`
+      });
+    }
+
+    let bannedUser = await Banned.findOne({ user: req.params.id });
+    
+    if (bannedUser) {
+      return res.status(400).json({
+        success: false,
+        message: `User with ID ${req.params.id} is already banned`
+      });
+    }
+
+    // Create ban with reason and optional unbanDate
+    bannedUser = await Banned.create({ 
+      user: req.params.id,
+      reason: req.body.reason,
+      unbanDate: req.body.unbanDate || null
+    });
+
+    res.status(200).json({
+      success: true,
+      data: bannedUser
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Error banning user'
+    });
+  }
+};

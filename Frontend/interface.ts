@@ -25,3 +25,20 @@ interface CoworkingItem {
     coWorking: string;
     bookDate: string;
   }
+  
+  interface BannedUser {
+    _id: string;
+    user: string;
+    reason: string;
+    unbanDate: string;
+  }
+
+  interface User{
+    _id: string;
+    name: string;
+    email: string;
+    tel: string;
+    password: string;
+    role: string;
+    createdAt: string;
+  }
