@@ -165,8 +165,8 @@ export default function BanUserPage() {
           </thead>
           <tbody>
             {filteredUsers.map((user) => (
-              <Link href={`/banuser/${user._id}`}>
-                <tr key={user._id} className="hover:bg-purple-50">
+              
+                <tr key={user._id} className="hover:bg-purple-50" onClick={(e) => {router.push(`/banuser/${user._id}`); e.stopPropagation();}}>
                 <td className="py-2 px-4 border-b border-purple-200 text-black text-center">
                   {user.name}
                 </td>
@@ -190,7 +190,7 @@ export default function BanUserPage() {
                       className={`bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded ${
                         submittingUserId !== user._id && submittingUserId !== null ? "opacity-50 cursor-not-allowed" : ""
                       }`}
-                      onClick={() => handleBanUser(user._id)}
+                      onClick={(e) => {handleBanUser(user._id); e.stopPropagation();}}
                     >
                       {submittingUserId === user._id ? "Banning..." : "Ban"}
                     </button>
@@ -200,14 +200,15 @@ export default function BanUserPage() {
                       className={`bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded ${
                         submittingUserId !== user._id && submittingUserId !== null || submittingUserId === user._id ? "opacity-50 cursor-not-allowed" : ""
                       }`}
-                      onClick={() => handleUnbanUser(user._id)}
+                      onClick={(e) => {handleUnbanUser(user._id); e.stopPropagation();}}
                     >
                       {submittingUserId === user._id ? "Unbanning..." : "Unban"}
                     </button>
                   )}
                 </td>
+                
               </tr>
-              </Link>
+              
             ))}
           </tbody>
         </table>
