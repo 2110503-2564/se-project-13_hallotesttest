@@ -8,6 +8,26 @@
     ],
     "routes": [
       {
+        "src": "/api-docs/swagger-ui.css",
+        "dest": "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css"
+      },
+      {
+        "src": "/api-docs/swagger-ui-bundle.js",
+        "dest": "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js"
+      },
+      {
+        "src": "/api-docs/swagger-ui-standalone-preset.js",
+        "dest": "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js"
+      },
+      {
+        "src": "/api-docs/swagger-ui-init.js",
+        "dest": "server.js"
+      },
+      {
+        "src": "/api-docs.json",
+        "dest": "server.js"
+      },
+      {
         "src": "/(.*)",
         "dest": "server.js"
       }
