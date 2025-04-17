@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import getUsers from "@/libs/getUsers";
@@ -45,8 +45,9 @@ export default function BanUserPage() {
       const bannedUsersResponse = await getBannedUsers(session.user.token);
 
       setUsers(Array.isArray(usersResponse.data) ? usersResponse.data : []);
-      setTotalPages(usersResponse.totalPages || 1);
-
+      setTotalPages(usersResponse.pages || 1);
+      // console.log(usersResponse.pages);
+      // console.log(usersResponse.data);
       setBannedUserIds(
         Array.isArray(bannedUsersResponse.data)
           ? bannedUsersResponse.data.map(
@@ -156,8 +157,10 @@ export default function BanUserPage() {
                 key={user._id}
                 className="hover:bg-purple-50"
                 onClick={(e) => {
-                  router.push(`/banuser/${user._id}`);
-                  e.stopPropagation();
+                  const target = e.target as HTMLElement;
+                  if (!target.closest("button")) {
+                    router.push(`/banuser/${user._id}`);
+                  }
                 }}
               >
                 <td className="py-2 px-4 border-b border-purple-200 text-center text-gray-700">
@@ -193,8 +196,8 @@ export default function BanUserPage() {
                           : ""
                       }`}
                       onClick={(e) => {
-                        handleBanUser(user._id);
                         e.stopPropagation();
+                        handleBanUser(user._id);
                       }}
                     >
                       {submittingUserId === user._id ? "Banning..." : "Ban"}
@@ -212,8 +215,8 @@ export default function BanUserPage() {
                           : ""
                       }`}
                       onClick={(e) => {
-                        handleUnbanUser(user._id);
                         e.stopPropagation();
+                        handleUnbanUser(user._id);
                       }}
                     >
                       {submittingUserId === user._id ? "Unbanning..." : "Unban"}
