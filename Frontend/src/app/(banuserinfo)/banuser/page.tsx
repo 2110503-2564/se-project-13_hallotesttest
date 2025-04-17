@@ -25,6 +25,7 @@ export default function BanUserPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [bannedUserIds, setBannedUserIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [bannedFilter, setBannedFilter] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submittingUserId, setSubmittingUserId] = useState<string | null>(null);
@@ -107,8 +108,9 @@ export default function BanUserPage() {
   const filteredUsers = Array.isArray(users)
     ? users.filter(
         (user) =>
-          user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+        (user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase())) && ((bannedFilter % 3 == 1 && bannedUserIds.includes(user._id)) ||
+        (bannedFilter % 3 == 2 && !bannedUserIds.includes(user._id)) || (bannedFilter % 3 == 0))
       )
     : [];
 
@@ -132,7 +134,7 @@ export default function BanUserPage() {
         Manage Users
       </h1>
 
-      <div className="mb-4">
+      <div className="mb-4 flex justify-between items-center">
         <input
           type="text"
           placeholder="Search by name or email"
@@ -140,6 +142,9 @@ export default function BanUserPage() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <button className="bg-white hover:bg-white-800 w-32 h-12 ml-5 text-purple-600 font-bold py-2 px-4 rounded-xl border-2 border-purple-200 flex items-center justify-center" onClick={(e) => setBannedFilter(bannedFilter+1)}>
+          {bannedFilter % 3 === 0 ? "All Users" : bannedFilter % 3 === 1 ? "Banned Users" : "Active Users"}
+        </button>
       </div>
 
       <div className="overflow-x-auto shadow-lg rounded-lg">
