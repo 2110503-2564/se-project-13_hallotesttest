@@ -13,7 +13,7 @@ export default function CoworkingCatalog() {
     async function fetchData() {
       try {
         setIsLoading(true);
-        const response = await fetch('https://deepseekxchatgpt-backend.vercel.app/api/v1/coworkings', {
+        const response = await fetch('https://se13-backend.vercel.app/api/v1/coworkings', {
           cache: 'no-store',
           headers: {
             'pragma': 'no-cache',

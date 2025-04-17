@@ -7,8 +7,7 @@ interface CoworkingItem {
     postalcode: string,
     tel: string,
     picture: string,
-    open: string,
-    close : string,
+    time: string,
     __v: number,
     id: string
   }
