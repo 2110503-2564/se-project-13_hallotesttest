@@ -26,8 +26,7 @@ export default function AddCoworking() {
       postalcode: "",
       tel: "",
       picture: "",
-      open: "",
-      close: "",
+      time:"",
       __v: 0,
       id: ""
     });
@@ -172,36 +171,41 @@ export default function AddCoworking() {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50"
             />
           </div>
-          <div>
-            <label htmlFor="open" className="block text-sm font-medium text-gray-700">
-              Open Time
+            <div>
+            <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-2">
+              Available Time
             </label>
-            <input 
-              type="text" 
-              name="open" 
-              id="open" 
-              placeholder="Enter open time"
-              value={form.open}
-              onChange={handleChange}
+            <div className="flex items-center space-x-2">
+              <input 
+              type="time" 
+              name="timeStart" 
+              id="timeStart" 
+              value={form.time?.split(' - ')[0]?.replace('.', ':')}
+              onChange={(e) => {
+                const endTime = form.time?.split(' - ')[1] || '';
+                const formattedTime = e.target.value.replace(':', '.') + (endTime ? ' - ' + endTime : '');
+                setForm(prev => ({ ...prev, time: formattedTime }));
+              }}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50"
-            />
-          </div>
-          <div>
-            <label htmlFor="close" className="block text-sm font-medium text-gray-700">
-              Closing Time
-            </label>
-            <input 
-              type="text" 
-              name="close" 
-              id="close" 
-              placeholder="Enter closing time"
-              value={form.close}
-              onChange={handleChange}
+              className="flex-1 rounded-md border-gray-300 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50"
+              />
+              <span className="text-gray-500">to</span>
+              <input 
+              type="time" 
+              name="timeEnd" 
+              id="timeEnd" 
+              value={form.time?.split(' - ')[1]?.replace('.', ':')}
+              onChange={(e) => {
+                const startTime = form.time?.split(' - ')[0] || '';
+                const formattedTime = startTime + ' - ' + e.target.value.replace(':', '.');
+                setForm(prev => ({ ...prev, time: formattedTime }));
+              }}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50"
-            />
-          </div>
+              className="flex-1 rounded-md border-gray-300 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50"
+              />
+            </div>
+            <p className="mt-1 text-xs text-gray-500">Format: 09.00 - 18.00</p>
+            </div>
         </div>
         <button 
           type="submit"

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import getUsers from "@/libs/getUsers";
 import getBannedUsers from "@/libs/getBannedUsers";
 import { banUser, unbanUser } from "@/libs/banUser"; // Import both functions
+import Link from "next/link";
 
 // Define a type for user object to ensure type safety
 interface User {
@@ -164,7 +165,8 @@ export default function BanUserPage() {
           </thead>
           <tbody>
             {filteredUsers.map((user) => (
-              <tr key={user._id} className="hover:bg-purple-50">
+              <Link href={`/banuser/${user._id}`}>
+                <tr key={user._id} className="hover:bg-purple-50">
                 <td className="py-2 px-4 border-b border-purple-200 text-black text-center">
                   {user.name}
                 </td>
@@ -205,6 +207,7 @@ export default function BanUserPage() {
                   )}
                 </td>
               </tr>
+              </Link>
             ))}
           </tbody>
         </table>
