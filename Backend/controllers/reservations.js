@@ -10,6 +10,9 @@ exports.getReservations = async (req, res, next) => {
         query = Reservation.find({ user: req.user.id }).populate({
             path: 'coWorking',
             select: 'name province tel'
+        }).populate({
+            path: 'user',
+            select: 'name email role'  // Add fields you want from user, excluding sensitive data
         });
     } else {
         if (req.params.coWorkingId) {
@@ -17,11 +20,17 @@ exports.getReservations = async (req, res, next) => {
             query = Reservation.find().populate({
                 path: 'coWorking',
                 select: 'name province tel'
+            }).populate({
+                path: 'user',
+                select: 'name email role'  // Add fields you want from user, excluding sensitive data
             });
         } else {
             query = Reservation.find().populate({
                 path: 'coWorking',
                 select: 'name province tel'
+            }).populate({
+                path: 'user',
+                select: 'name email role'  // Add fields you want from user, excluding sensitive data
             });
         }
     }
@@ -75,6 +84,15 @@ exports.addReservation = async (req, res, next) => {
         }
 
         req.body.user = req.user.id;
+        const existedDate = await Reservation.find({reservDate: req.body.reservDate,coWorking: req.params.coWorkingId})
+        console.log(existedDate)
+        console.log(existedDate.length>=1)
+        if(existedDate.length>=1) {
+            return res.status(400).json({
+                success: false,
+                message: 'This place has already been reserved'
+            })
+        }
 
         const existedReservations = await Reservation.find({ user: req.user.id });
         console.log(existedReservations);
@@ -117,6 +135,17 @@ exports.updateReservation = async (req, res, next) => {
                 message: `User ${req.user.id} is not authorized to update this reservation`
             });
         }
+
+        const existedDate = await Reservation.find({reservDate: req.body.reservDate,coWorking: req.body.coWorking})
+        console.log(existedDate)
+        console.log(existedDate.length>=1)
+        if(existedDate.length>=1) {
+            return res.status(400).json({
+                success: false,
+                message: 'This place has already been reserved'
+            })
+        }
+
         reservation = await Reservation.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true

@@ -42,13 +42,13 @@ module.exports = router;
  *       properties:
  *         id:
  *           type: string
- *           description: The auto-generated id of the co-working space
+ *           description: The auto-generated id of the Co-Working space
  *         name:
  *           type: string
- *           description: The name of the co-working space
+ *           description: The name of the Co-Working space
  *         address:
  *           type: string
- *           description: The address of the co-working space
+ *           description: The address of the Co-Working space
  *         district:
  *           type: string
  *           description: The district where the space is located
@@ -92,11 +92,11 @@ module.exports = router;
  * @swagger
  * /coworkings:
  *   get:
- *     summary: Get all co-working spaces
+ *     summary: Get all Co-Working spaces
  *     tags: [CoWorkings]
  *     responses:
  *       200:
- *         description: List of co-working spaces
+ *         description: List of Co-Working spaces
  *         content:
  *           application/json:
  *             schema:
@@ -105,7 +105,7 @@ module.exports = router;
  *                 $ref: '#/components/schemas/CoWorking'
  *
  *   post:
- *     summary: Create a new co-working space
+ *     summary: Create a new Co-Working space
  *     tags: [CoWorkings]
  *     security:
  *       - bearerAuth: []
@@ -117,7 +117,7 @@ module.exports = router;
  *             $ref: '#/components/schemas/CoWorking'
  *     responses:
  *       201:
- *         description: The co-working space was successfully created
+ *         description: The Co-Working space was successfully created
  *         content:
  *           application/json:
  *             schema:
@@ -130,7 +130,7 @@ module.exports = router;
  * @swagger
  * /coworkings/{id}:
  *   get:
- *     summary: Get a co-working space by id
+ *     summary: Get a Co-Working space by id
  *     tags: [CoWorkings]
  *     parameters:
  *       - in: path
@@ -138,19 +138,19 @@ module.exports = router;
  *         schema:
  *           type: string
  *         required: true
- *         description: The co-working space id
+ *         description: The Co-Working space id
  *     responses:
  *       200:
- *         description: Co-working space information
+ *         description: Co-Working space information
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/CoWorking'
  *       404:
- *         description: Co-working space not found
+ *         description: Co-Working space not found
  *
  *   put:
- *     summary: Update a co-working space
+ *     summary: Update a Co-Working space
  *     tags: [CoWorkings]
  *     security:
  *       - bearerAuth: []
@@ -160,7 +160,7 @@ module.exports = router;
  *         schema:
  *           type: string
  *         required: true
- *         description: The co-working space id
+ *         description: The Co-Working space id
  *     requestBody:
  *       required: true
  *       content:
@@ -169,7 +169,7 @@ module.exports = router;
  *             $ref: '#/components/schemas/CoWorking'
  *     responses:
  *       200:
- *         description: The co-working space was updated
+ *         description: The Co-Working space was updated
  *         content:
  *           application/json:
  *             schema:
@@ -177,10 +177,10 @@ module.exports = router;
  *       400:
  *         description: Bad request
  *       404:
- *         description: Co-working space not found
+ *         description: Co-Working space not found
  *
  *   delete:
- *     summary: Delete a co-working space
+ *     summary: Delete a Co-Working space
  *     tags: [CoWorkings]
  *     security:
  *       - bearerAuth: []
@@ -190,10 +190,10 @@ module.exports = router;
  *         schema:
  *           type: string
  *         required: true
- *         description: The co-working space id
+ *         description: The Co-Working space id
  *     responses:
  *       200:
- *         description: The co-working space was deleted successfully
+ *         description: The Co-Working space was deleted successfully
  *       404:
- *         description: Co-working space not found
+ *         description: Co-Working space not found
  */
