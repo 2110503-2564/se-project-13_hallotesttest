@@ -32,12 +32,12 @@ const swaggerOptions= {
     apis : ['./routes/*.js']
 }
 
-const swaggerDocs = swaggerJsDoc(swaggerOptions,{ customCssUrl: CSS_URL });
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
 connectDB();
 
 const app = express();
 //API documentation
-app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs));
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs,{ customCssUrl: CSS_URL }));
 
 app.use(express.json());
 //Sanitize Data
