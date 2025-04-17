@@ -13,6 +13,7 @@ const coworkings = require('./routes/coworkings');
 const reservations = require('./routes/reservations');
 const auth = require('./routes/auth');
 const banned = require('./routes/banning');
+const users = require('./routes/user');
 
 dotenv.config({ path: './config/config.env' });
 
@@ -66,7 +67,9 @@ app.use(cookieParser());
 app.use('/api/v1/coworkings', coworkings);
 app.use('/api/v1/reservations', reservations);
 app.use('/api/v1/auth', auth);
+
 app.use('/api/v1/banned', banned);
+app.use('/api/v1/users', users);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, console.log('Server running in ', process.env.NODE_ENV, ' mode on port', PORT));
