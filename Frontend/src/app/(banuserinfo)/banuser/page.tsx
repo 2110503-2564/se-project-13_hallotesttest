@@ -81,6 +81,7 @@ export default function BanUserPage() {
     } catch (err: any) {
       console.error("Error fetching data:", err);
       setError(err.message || "Failed to fetch data");
+    
     } finally {
       setLoading(false);
     }
@@ -93,7 +94,7 @@ export default function BanUserPage() {
       return;
     }
     fetchData();
-  }, [session, status, currentPage]);
+  }, [status, currentPage]);
 
   // const handleBanUser = async (userId: string) => {
   //   setSubmittingUserId(userId);
@@ -112,7 +113,6 @@ export default function BanUserPage() {
   //     setSubmittingUserId(null);
   //   }
   // };
-
 
   const handleUnbanUser = async (userId: string) => {
     setSubmittingUserId(userId);
@@ -135,7 +135,7 @@ export default function BanUserPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-purple-50">
+      <div className="flex justify-center items-center bg-purple-50 w-full h-screen">
         <div className="text-purple-700 font-semibold">Loading users...</div>
       </div>
     );
@@ -146,104 +146,98 @@ export default function BanUserPage() {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-purple-50 min-h-screen">
+    <div className="bg-purple-50 min-h-screen w-full p-8 mx-auto flex flex-col items-center">
       <h1 className="text-2xl font-bold mb-4 text-purple-800 text-center">
         Manage Users
       </h1>
-
-      <div className="overflow-x-auto shadow-lg rounded-lg">
-        <table className="min-w-full bg-white border border-purple-200">
-          <thead>
-            <tr className="bg-purple-100">
-              <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
-                #
-              </th>
-              <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
-                Name
-              </th>
-              <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
-                Email
-              </th>
-              <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
-                Role
-              </th>
-              <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
-                Status
-              </th>
-              <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user, index) => (
-              <tr
-                key={user._id}
-                className="hover:bg-purple-50"
-                onClick={(e) => {
-                  router.push(`/banuser/${user._id}`);
-                  e.stopPropagation();
-                }}
-              >
-                <td className="py-2 px-4 border-b border-purple-200 text-center text-gray-700">
-                  {(currentPage - 1) * itemsPerPage + index + 1}
-                </td>
-                <td className="py-2 px-4 border-b border-purple-200 text-black text-center">
-                  {user.name}
-                </td>
-                <td className="py-2 px-4 border-b border-purple-200 text-black text-center">
-                  {user.email}
-                </td>
-                <td className="py-2 px-4 border-b border-purple-200 text-black text-center">
-                  {user.role}
-                </td>
-                <td className="py-2 px-4 border-b border-purple-200 text-center">
-                  {bannedUserIds.includes(user._id) ? (
-                    <span className="text-red-600 font-medium">Banned</span>
-                  ) : (
-                    <span className="text-green-600 font-medium">Active</span>
-                  )}
-                </td>
-                <td className="py-2 px-4 border-b border-purple-200 text-center">
-                  {!bannedUserIds.includes(user._id) ? (
-                    <button
-                      disabled={
-                        submittingUserId !== null &&
-                        submittingUserId !== user._id
-                      }
-                      className={`bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded ${
-                        submittingUserId !== user._id &&
-                        submittingUserId !== null
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
-                      onClick={(e) => {handleBanClick(user._id); e.stopPropagation();}}
-                    >
-                      {submittingUserId === user._id ? "Banning..." : "Ban"}
-                    </button>
-                  ) : (
-                    <button
-                      disabled={
-                        submittingUserId !== null &&
-                        submittingUserId !== user._id
-                      }
-                      className={`bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded ${
-                        submittingUserId !== user._id &&
-                        submittingUserId !== null
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
-
-                      onClick={(e) => {handleUnbanClick(user._id); e.stopPropagation();}}
-                    >
-                      {submittingUserId === user._id ? "Unbanning..." : "Unban"}
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="shadow-lg rounded-lg w-full max-w-7xl rounded-lg overflow-hidden">
+      <table className="w-full bg-white border border-purple-200 rounded-lg shadow-lg">
+        <thead>
+        <tr className="bg-purple-100">
+          <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
+          Name
+          </th>
+          <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
+          Email
+          </th>
+          <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
+          Role
+          </th>
+          <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
+          Status
+          </th>
+          <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
+          Actions
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        {users.map((user, index) => (
+          <tr
+            key={user._id}
+            className={`${bannedUserIds.includes(user._id) ? "bg-red-50 hover:bg-red-100" : ""}`}
+            onClick={(e) => {
+              if(!bannedUserIds.includes(user._id)) return;
+              router.push(`/banuser/${user._id}`);
+              //e.stopPropagation();
+            }}
+          >
+          
+          <td className="py-2 px-4 border-b border-purple-200 text-black text-center">
+            {user.name}
+          </td>
+          <td className="py-2 px-4 border-b border-purple-200 text-black text-center">
+            {user.email}
+          </td>
+          <td className="py-2 px-4 border-b border-purple-200 text-black text-center">
+            {user.role}
+          </td>
+          <td className="py-2 px-4 border-b border-purple-200 text-center">
+            {bannedUserIds.includes(user._id) ? (
+            <span className="text-red-600 font-medium">Banned</span>
+            ) : (
+            <span className="text-green-600 font-medium">Active</span>
+            )}
+          </td>
+          <td className="py-2 px-4 border-b border-purple-200 text-center">
+            {!bannedUserIds.includes(user._id) ? (
+            <button
+              disabled={
+              submittingUserId !== null &&
+              submittingUserId !== user._id
+              }
+              className={`bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-6 rounded ${
+              submittingUserId !== user._id &&
+              submittingUserId !== null
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+              }`}
+              onClick={(e) => {handleBanClick(user._id); e.stopPropagation();}}
+            >
+              {submittingUserId === user._id ? "Banning..." : "Ban"}
+            </button>
+            ) : (
+            <button
+              disabled={
+              submittingUserId !== null &&
+              submittingUserId !== user._id
+              }
+              className={`bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded ${
+              submittingUserId !== user._id &&
+              submittingUserId !== null
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+              }`}
+              onClick={(e) => {handleUnbanClick(user._id); e.stopPropagation();}}
+            >
+              {submittingUserId === user._id ? "Unbanning..." : "Unban"}
+            </button>
+            )}
+          </td>
+          </tr>
+        ))}
+        </tbody>
+      </table>
       </div>
 
       {/* Pagination Controls */}
