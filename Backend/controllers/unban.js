@@ -1,10 +1,6 @@
-import {Banned} from '../models/Banned'
+const Banned = require('../models/Banned')
 
-export const cron = async () => {
-    if(req.method !== 'POST') {
-        return res.status(405),json({message : 'Method not allowed'});
-    }
-
+exports.cron = async (req,res,next) => {
     try {
         const now = new Date();
         const bannedUsers = await Banned.find({});
@@ -15,7 +11,10 @@ export const cron = async () => {
                 }
             }
         }
+        res.status(200).json({message : 'Unbanned completed'});
     } catch (error) {
         return res.status(500).json({message : 'Error unbanning users'});
     }
-}
+};
+
+
