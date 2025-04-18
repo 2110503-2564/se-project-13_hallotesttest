@@ -17,6 +17,7 @@ interface User {
 }
 import BanPopup from "@/components/BanPopup";
 import UnbanPopup from "@/components/UnbanPopup";
+import { set } from "mongoose";
 
 // Define a type for user object to ensure type safety
 
@@ -38,16 +39,19 @@ export default function BanUserPage() {
   const [showUnbanPopup, setShowUnbanPopup] = useState(false);
 
   const handleBanClick = (uid:string) => {
+    setSubmittingUserId(uid);
     setSelectedUser(uid);
     setShowBanPopup(true);
   };
 
   const handleUnbanClick = (uid:string) => {
+    setSubmittingUserId(uid);
     setSelectedUser(uid);
     setShowUnbanPopup(true);
   };
 
   const handleClosePopup = () => {
+    setSubmittingUserId(null);
     setShowBanPopup(false);
     setShowUnbanPopup(false);
     setSelectedUser(null);
@@ -114,24 +118,24 @@ export default function BanUserPage() {
   //   }
   // };
 
-  const handleUnbanUser = async (userId: string) => {
-    setSubmittingUserId(userId);
-    setError(null);
-    try {
-      if (!session?.user?.token) {
-        throw new Error("No token found in session");
-      }
+  // const handleUnbanUser = async (userId: string) => {
+  //   setSubmittingUserId(userId);
+  //   setError(null);
+  //   try {
+  //     if (!session?.user?.token) {
+  //       throw new Error("No token found in session");
+  //     }
 
-      await unbanUser(userId, session.user.token);
-      await fetchData();
-    } catch (err: any) {
-      console.error("Error unbanning user:", err);
-      setError(err.message || "Failed to unban user");
-      alert(err.message || "Failed to unban user");
-    } finally {
-      setSubmittingUserId(null);
-    }
-  };
+  //     await unbanUser(userId, session.user.token);
+  //     await fetchData();
+  //   } catch (err: any) {
+  //     console.error("Error unbanning user:", err);
+  //     setError(err.message || "Failed to unban user");
+  //     alert(err.message || "Failed to unban user");
+  //   } finally {
+  //     setSubmittingUserId(null);
+  //   }
+  // };
 
   if (loading) {
     return (
@@ -179,7 +183,6 @@ export default function BanUserPage() {
             onClick={(e) => {
               if(!bannedUserIds.includes(user._id)) return;
               router.push(`/banuser/${user._id}`);
-              //e.stopPropagation();
             }}
           >
           
@@ -202,15 +205,8 @@ export default function BanUserPage() {
           <td className="py-2 px-4 border-b border-purple-200 text-center">
             {!bannedUserIds.includes(user._id) ? (
             <button
-              disabled={
-              submittingUserId !== null &&
-              submittingUserId !== user._id
-              }
               className={`bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-6 rounded ${
-              submittingUserId !== user._id &&
-              submittingUserId !== null
-                ? "opacity-50 cursor-not-allowed"
-                : ""
+              submittingUserId === user._id ? "opacity-50 cursor-not-allowed" : ""
               }`}
               onClick={(e) => {handleBanClick(user._id); e.stopPropagation();}}
             >
@@ -218,15 +214,8 @@ export default function BanUserPage() {
             </button>
             ) : (
             <button
-              disabled={
-              submittingUserId !== null &&
-              submittingUserId !== user._id
-              }
               className={`bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded ${
-              submittingUserId !== user._id &&
-              submittingUserId !== null
-                ? "opacity-50 cursor-not-allowed"
-                : ""
+              submittingUserId === user._id ? "opacity-50 cursor-not-allowed" : ""
               }`}
               onClick={(e) => {handleUnbanClick(user._id); e.stopPropagation();}}
             >

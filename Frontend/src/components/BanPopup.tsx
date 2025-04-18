@@ -23,7 +23,7 @@ export default function BanPopup({ uid,onClose }: BanPopupProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await banUser(uid, session?.user?.token || '', formData.reason, formData.unbanDate.format('YYYY-MM-DDT00:00:00.000+00:00'));
+            const response = await banUser(uid, session?.user?.token || '', formData.reason, formData.unbanDate.format('YYYY-MM-DDT00:00:00.000+07:00'));
             window.location.reload();
             onClose();
         } catch (error) {
