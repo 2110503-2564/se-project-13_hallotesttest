@@ -1,6 +1,6 @@
 import {Banned} from '../models/Banned'
 
-export default async function handler(req,res) {
+export const cron = async () => {
     if(req.method !== 'POST') {
         return res.status(405),json({message : 'Method not allowed'});
     }

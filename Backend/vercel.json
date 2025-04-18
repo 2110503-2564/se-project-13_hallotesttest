@@ -6,11 +6,6 @@
         "use": "@vercel/node"
       }
     ],
-    "functions": {
-      "controllers/unban.js": {
-        "schedule": "0 0 * * *"
-      }
-    },
     "routes": [
       {
         "src": "/api-docs/swagger-ui.css",
@@ -35,6 +30,12 @@
       {
         "src": "/(.*)",
         "dest": "server.js"
+      }
+    ],
+    "crons" : [
+      {
+        "path" : "/cron",
+        "schedule" : "0 0 * * *"
       }
     ]
   }
