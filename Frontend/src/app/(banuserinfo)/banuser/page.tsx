@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import getUsers from "@/libs/getUsers";
 import getBannedUsers from "@/libs/getBannedUsers";
-import { banUser, unbanUser } from "@/libs/banUser";
 
 interface User {
   _id: string;
@@ -32,6 +31,7 @@ export default function BanUserPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [tempCurrentPage, setTempCurrentPage] = useState(currentPage);
   const [totalPages, setTotalPages] = useState(1);
   const [showBanPopup, setShowBanPopup] = useState(false);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
@@ -89,14 +89,14 @@ export default function BanUserPage() {
     }
   };
 
-  const handleItemsPerPageChange = (e) => {
-    const value = parseInt(e.target.value, 10);
-    if (!isNaN(value) && value > 0) {
-      setItemsPerPage(value);
-      setCurrentPage(1); // reset to first page when itemsPerPage changes
-      console.log(itemsPerPage, currentPage);
-    }
-  };
+  // const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = parseInt(e.target.value, 10);
+  //   if (!isNaN(value) && value > 0) {
+  //     setItemsPerPage(value);
+  //     setCurrentPage(1); // reset to first page when itemsPerPage changes
+  //     console.log(itemsPerPage, currentPage);
+  //   }
+  // };
 
   useEffect(() => {
     if (status === "loading") return;
@@ -105,7 +105,7 @@ export default function BanUserPage() {
       return;
     }
     fetchData();
-  }, [status, currentPage]);
+  }, [status, currentPage, itemsPerPage, currentPage]);
 
   // const handleBanUser = async (userId: string) => {
   //   setSubmittingUserId(userId);
@@ -250,39 +250,95 @@ export default function BanUserPage() {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex justify-center mt-6 space-x-2">
-        <input
-          type="number"
-          min={1}
-          value={itemsPerPage}
-          onChange={handleItemsPerPageChange}
-          className="border rounded px-2 py-1 w-20 text-sm text-black"
-        />
-        <button
-          className="px-4 py-2 bg-purple-500 text-white rounded disabled:opacity-50"
-          onClick={() => {
-            setCurrentPage((prev) => Math.max(prev - 1, 1));
-          }}
-          disabled={currentPage === 1}
-        >
-          Prev
-        </button>
+      <div className="flex justify-between items-center w-full max-w-7xl p-4 bg-white shadow-md rounded-xl text-sm mt-2">
+        {/* Rows per page */}
+        <div className="flex items-center gap-3">
+          <span className="text-gray-700">Rows per page</span>
+          <select
+            value={itemsPerPage}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              setItemsPerPage(value);
+              setCurrentPage(1);
+            }}
+            className="border border-purple-300 rounded-md pr-7 pl-3 py-1 focus:outline-none focus:ring-1 focus:ring-purple-400 text-gray-600 text-sm"
+          >
+            {[5, 10, 20, 50].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          <span className="text-gray-600 ">{`1 - 10 of 100 Rows`}</span>
+        </div>
 
-        <span className="px-4 py-2 text-purple-800 font-semibold">
-          Page {currentPage} of {totalPages}
-        </span>
-
-        <button
-          className="px-4 py-2 bg-purple-500 text-white rounded disabled:opacity-50"
-          onClick={() => {
-            console.log("Next clicked", currentPage, totalPages);
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-          }}
-          disabled={currentPage >= totalPages}
-        >
-          Next
-        </button>
+        {/* Pagination controls */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              setCurrentPage(1);
+              setTempCurrentPage(1);
+            }}
+            disabled={currentPage === 1}
+            className="text-gray-700 disabled:opacity-30 text-xl"
+          >
+            &laquo;
+          </button>
+          <button
+            onClick={() => {
+              const newPage = Math.max(currentPage - 1, 1);
+              setCurrentPage(newPage);
+              setTempCurrentPage(newPage);
+            }}
+            disabled={currentPage === 1}
+            className="text-gray-700 disabled:opacity-30 text-xl"
+          >
+            &lsaquo;
+          </button>
+          <input
+            type="text"
+            min={1}
+            max={totalPages}
+            value={tempCurrentPage}
+            onChange={(e) => setTempCurrentPage(parseInt(e.target.value, 10))}
+            onBlur={() => {
+              if (
+                tempCurrentPage > 0 &&
+                tempCurrentPage <= totalPages &&
+                tempCurrentPage !== currentPage
+              ) {
+                setCurrentPage(tempCurrentPage);
+              } else {
+                setTempCurrentPage(currentPage);
+              }
+            }}
+            className="w-12 text-center border border-purple-300 rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-purple-400 text-gray-600"
+          />
+          <span className="text-gray-700">of {totalPages}</span>
+          <button
+            onClick={() => {
+              const newPage = Math.min(currentPage + 1, totalPages);
+              setCurrentPage(newPage);
+              setTempCurrentPage(newPage);
+            }}
+            disabled={currentPage === totalPages}
+            className="text-gray-700 disabled:opacity-30 text-xl"
+          >
+            &rsaquo;
+          </button>
+          <button
+            onClick={() => {
+              setCurrentPage(totalPages);
+              setTempCurrentPage(totalPages);
+            }}
+            disabled={currentPage === totalPages}
+            className="text-gray-700 disabled:opacity-30 text-xl"
+          >
+            &raquo;
+          </button>
+        </div>
       </div>
+
       {showBanPopup && selectedUser && (
         <BanPopup uid={selectedUser} onClose={handleClosePopup} />
       )}
