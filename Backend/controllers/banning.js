@@ -24,6 +24,35 @@ exports.getBannedUsers = async (req, res, next) => {
   }
 };
 
+// @desc    Get a banned user by ID
+// @route   GET /api/v1/banned/:id
+// @access  Private/Admin
+exports.getBannedUserbyID = async (req, res, next) => {
+  try {
+    const bannedUser = await Banned.findById(req.params.id).populate({
+      path: 'user',
+      select: 'name email password role'
+    });
+    
+    if (!bannedUser) {
+      return res.status(404).json({
+        success: false,
+        message: `Banned user not found with id of ${req.params.id}`
+      });
+    }
+    
+    res.status(200).json({
+      success: true,
+      data: bannedUser
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Error retrieving banned user'
+    });
+  }
+};
+
 // @desc    Ban a user
 // @route   PUT /api/v1/banned/:id
 // @access  Private/Admin
