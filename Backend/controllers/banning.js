@@ -27,7 +27,7 @@ exports.getBannedUsers = async (req, res, next) => {
 // @desc    Get a banned user by ID
 // @route   GET /api/v1/banned/:id
 // @access  Private/Admin
-exports.getBannedUserbyID = async (req, res, next) => {
+exports.getBannedUser = async (req, res, next) => {
   try {
     const bannedUser = await Banned.findById(req.params.id).populate({
       path: 'user',
@@ -121,43 +121,7 @@ exports.unbanUser = async (req, res, next) => {
     });
   }
 };
-// @desc    Check if a user is banned
-// @route   GET /api/v1/banned/:id/check
-// @access  Public
-exports.checkIfBanned = async (req, res, next) => {
-  try {
-    const bannedUser = await Banned.findOne({ user: req.params.id });
 
-    if (!bannedUser) {
-      return res.status(200).json({
-        success: true,
-        banned: false
-      });
-    }
-    
-    if (bannedUser.unbanDate && new Date() >= new Date(bannedUser.unbanDate)) {
-      await bannedUser.deleteOne();
-      return res.status(200).json({
-        success: true,
-        banned: false
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      banned: true,
-      data: {
-        reason: bannedUser.reason,
-        unbanDate: bannedUser.unbanDate
-      }
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: 'Error checking ban status'
-    });
-  }
-};
 
 // @desc    Update a banned user
 // @route   PUT /api/v1/banned/:id
