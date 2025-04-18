@@ -93,7 +93,7 @@ exports.banUser = async (req, res, next) => {
     });
   }
 };
-
+     
 // @desc    Unban a user
 // @route   DELETE /api/v1/banned/:id
 // @access  Private/Admin
@@ -155,6 +155,38 @@ exports.checkIfBanned = async (req, res, next) => {
     res.status(500).json({
       success: false,
       message: 'Error checking ban status'
+    });
+  }
+};
+
+// @desc    Update a banned user
+// @route   PUT /api/v1/banned/:id
+// @access  Private/Admin
+exports.updateBannedUser = async (req, res, next) => {
+  try {
+    const bannedUser = await Banned.findById(req.params.id);
+
+    if (!bannedUser) {
+      return res.status(404).json({
+        success: false,
+        message: `Banned user not found with id of ${req.params.id}`
+      });
+    }
+
+    const { reason, unbanDate } = req.body;
+    bannedUser.reason = reason || bannedUser.reason;
+    bannedUser.unbanDate = unbanDate || bannedUser.unbanDate;
+
+    await bannedUser.save();
+
+    res.status(200).json({
+      success: true,
+      data: bannedUser
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Error updating banned user'
     });
   }
 };
