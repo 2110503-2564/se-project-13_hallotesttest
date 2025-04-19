@@ -17,21 +17,21 @@ interface User {
 import BanPopup from "@/components/BanPopup";
 import UnbanPopup from "@/components/UnbanPopup";
 import dayjs from "dayjs";
+import { set } from "mongoose";
 
 // Define a type for user object to ensure type safety
 
 export default function BanUserPage() {
-
   const { data: session, status } = useSession();
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [bannedUserIds, setBannedUserIds] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [bannedFilter, setBannedFilter] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submittingUserId, setSubmittingUserId] = useState<string | null>(null);
-  const [bannedUserMap, setBannedUserMap] = useState<Record<string, string>>({});
+  const [bannedUserMap, setBannedUserMap] = useState<Record<string, string>>(
+    {}
+  );
   const [searchTerm, setSearchTerm] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,6 +41,11 @@ export default function BanUserPage() {
   const [showBanPopup, setShowBanPopup] = useState(false);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [showUnbanPopup, setShowUnbanPopup] = useState(false);
+  const [showFilterPopup, setShowFilterPopup] = useState(false);
+  const [filterAdmin, setFilterAdmin] = useState(false);
+  const [filterUser, setFilterUser] = useState(false);
+  const [filterBanned, setFilterBanned] = useState(false);
+  const [filterActive, setFilterActive] = useState(false); 
 
   const handleBanClick = (uid: string) => {
     setSubmittingUserId(uid);
@@ -59,6 +64,18 @@ export default function BanUserPage() {
     setShowBanPopup(false);
     setShowUnbanPopup(false);
     setSelectedUser(null);
+  };
+
+  const handleFilterClick = () => {
+    setShowFilterPopup(!showFilterPopup);
+  };
+
+  const handleFilterApply = () => {
+    // Apply filter logic here
+    setShowFilterPopup(false);
+  };
+  const handleFilterClose = () => {
+    setShowFilterPopup(false);
   };
 
   const fetchData = async () => {
@@ -89,12 +106,13 @@ export default function BanUserPage() {
 
       const bannedMap: Record<string, string> = {};
       if (Array.isArray(bannedUsersResponse.data)) {
-        bannedUsersResponse.data.forEach((entry: { _id: string; user: { _id: string } }) => {
-          bannedMap[entry.user._id] = entry._id;
-        });
+        bannedUsersResponse.data.forEach(
+          (entry: { _id: string; user: { _id: string } }) => {
+            bannedMap[entry.user._id] = entry._id;
+          }
+        );
       }
       setBannedUserMap(bannedMap);
-
     } catch (err: any) {
       console.error("Error fetching data:", err);
       setError(err.message || "Failed to fetch data");
@@ -104,12 +122,16 @@ export default function BanUserPage() {
   };
 
   const filteredUsers = Array.isArray(users)
-     ? users.filter(
-         (user) =>
-           user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           user.email?.toLowerCase().includes(searchTerm.toLowerCase())
-       )
-     : [];
+    ? users.filter(
+        (user) =>
+          (user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.email?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+          (!filterAdmin || user.role === "admin") &&
+          (!filterUser || user.role === "user") &&
+          (!filterActive || !bannedUserIds.includes(user._id)) &&
+          (!filterBanned || bannedUserIds.includes(user._id))
+      )
+    : [];
 
   // const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const value = parseInt(e.target.value, 10);
@@ -119,6 +141,113 @@ export default function BanUserPage() {
   //     console.log(itemsPerPage, currentPage);
   //   }
   // };
+
+  const filterPopup = () => {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+          <div className="space-y-6">
+            <div>
+              <h2 className="mt-5 font-bold text-2xl text-purple-700 mb-3">Role</h2>
+              <div className="flex flex-row justify-between items-center">
+                <div className="flex items-center">
+                  <button
+                    className={`mt-8 rounded-md w-[100px] border border-black bg-white px-5 py-2 text-center text-black text-base font-normal cursor-pointer mx-10 ${
+                      filterAdmin
+                        ? "bg-purple-700 hover:bg-purple-600 text-white border border-purple-800"
+                        : "bg-white hover:bg-gray-100"
+                    } `}
+                    onClick={(e) => {
+                      setFilterAdmin(!filterAdmin);
+                      setFilterUser(false);
+                      e.stopPropagation();
+                    }}
+                  >
+                    Admin
+                  </button>
+                </div>
+                <div className="flex items-center">
+                  <button
+                    className={`mt-8 rounded-md w-[100px] border border-black bg-white px-5 py-2 text-center text-black text-base font-normal cursor-pointer mx-10 ${
+                      filterUser
+                        ? "bg-purple-700 hover:bg-purple-600 text-white border border-purple-800"
+                        : "bg-white hover:bg-gray-100"
+                    } `}
+                    onClick={(e) => {
+                      setFilterUser(!filterUser);
+                      setFilterAdmin(false);
+                      e.stopPropagation();
+                    }}
+                  >
+                    User
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="mt-8 font-bold text-2xl text-purple-700 mb-3">Status</h2>
+              <div className="flex flex-row justify-between items-center">
+                <div className="flex items-center">
+                  <button
+                    className={`mt-8 rounded-md w-[100px] border border-black bg-white px-5 py-2 text-center text-black text-base font-normal cursor-pointer mx-10 ${
+                      filterActive
+                        ? "bg-purple-700 hover:bg-purple-600 text-white border border-purple-800"
+                        : "bg-white hover:bg-gray-100"
+                    } `}
+                    onClick={(e) => {
+                      setFilterActive(!filterActive);
+                      setFilterBanned(false);
+                      e.stopPropagation();
+                    }}
+                  >
+                    Active
+                  </button>
+                </div>
+                <div className="flex items-center">
+                  <button
+                    className={`mt-8 rounded-md w-[100px] border border-black bg-white px-5 py-2 text-center text-black text-base font-normal cursor-pointer mx-10 ${
+                      filterBanned
+                        ? "bg-purple-700 hover:bg-purple-600 text-white border border-purple-800"
+                        : "bg-white hover:bg-gray-100"
+                    } `}
+                    onClick={(e) => {
+                      setFilterBanned(!filterBanned);
+                      setFilterActive(false);
+                      e.stopPropagation();
+                    }}
+                  >
+                    Banned
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 flex justify-end space-x-3">
+            <button
+              className="mt-8 mx-5 w-[100px] rounded-md bg-purple-600 px-6 py-3 text-center text-white text-base font-medium shadow-md cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFilterApply();
+              }}
+            >
+              Filter
+            </button>
+            <button
+              className="mt-8 mx-5 w-[100px] rounded-md bg-purple-600 px-6 py-3 text-center text-white text-base font-medium shadow-md cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFilterClose();
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   useEffect(() => {
     if (status === "loading") return;
@@ -165,27 +294,6 @@ export default function BanUserPage() {
   //     setSubmittingUserId(null);
   //   }
   // };
-      await unbanUser(userId, session.user.token);
-      await fetchData();
-    } catch (err: any) {
-      console.error("Error unbanning user:", err);
-      setError(err.message || "Failed to unban user");
-      alert(err.message || "Failed to unban user");
-    } finally {
-      setSubmittingUserId(null);
-    }
-  };
-
-  const filteredUsers = Array.isArray(users)
-    ? users.filter(
-        (user) =>
-        (user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchTerm.toLowerCase())) && ((bannedFilter % 3 == 1 && bannedUserIds.includes(user._id)) ||
-        (bannedFilter % 3 == 2 && !bannedUserIds.includes(user._id)) || (bannedFilter % 3 == 0))
-      )
-    : [];
-
-
 
   if (loading) {
     return (
@@ -204,17 +312,27 @@ export default function BanUserPage() {
       <h1 className="text-2xl font-bold mb-4 text-purple-800 text-center">
         Manage Users
       </h1>
-      
+
+      <div className="flex items-center justify-between bg-white p-2 rounded-xl shadow-sm border border-purple-100 w-full my-5 max-w-7xl">
+        <input
+          type="text"
+          placeholder="Search by name or email"
+          className="w-full bg-transparent outline-none focus:outline-none focus:ring-0 border-none text-gray-800 placeholder-gray-400"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button
+          className="ml-4 px-4 py-1 font-bold rounded-full border border-purple-300 text-purple-500 bg-purple-100/30 hover:bg-purple-100 transition font-semibold"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleFilterClick();
+          }}
+        >
+          Filter
+        </button>
+      </div>
+
       <div className="shadow-lg w-full max-w-7xl rounded-lg overflow-hidden">
-        <div className="mb-4">
-         <input
-           type="text"
-           placeholder="Search by name or email"
-           className="shadow appearance-none border border-purple-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500"
-           value={searchTerm}
-           onChange={(e) => setSearchTerm(e.target.value)}
-         />
-       </div>
         <table className="w-full bg-white border border-purple-200 rounded-lg shadow-lg">
           <thead>
             <tr className="bg-purple-100">
@@ -240,9 +358,7 @@ export default function BanUserPage() {
               <tr
                 key={user._id}
                 className={`${
-                  bannedUserMap[user._id]
-                    ? "bg-red-50 hover:bg-red-100"
-                    : ""
+                  bannedUserMap[user._id] ? "bg-red-50 hover:bg-red-100" : ""
                 }`}
                 onClick={(e) => {
                   const banId = bannedUserMap[user._id];
@@ -394,11 +510,18 @@ export default function BanUserPage() {
       </div>
 
       {showBanPopup && selectedUser && (
-        <BanPopup uid={selectedUser} onClose={handleClosePopup} prevMsg="" prevDate={dayjs().add(1, 'day').toString()} />
+        <BanPopup
+          uid={selectedUser}
+          onClose={handleClosePopup}
+          prevMsg=""
+          prevDate={dayjs().add(1, "day").toString()}
+        />
       )}
       {showUnbanPopup && selectedUser && (
         <UnbanPopup uid={selectedUser} onClose={handleClosePopup} />
       )}
+
+      {showFilterPopup && filterPopup()}
     </div>
   );
 }
