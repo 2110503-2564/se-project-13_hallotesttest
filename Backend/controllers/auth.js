@@ -41,13 +41,6 @@ exports.login=async (req,res,next)=> {
             msg : 'Invalid credentials'
         });
     }
-    const checkBan = await Banned.findOne({user : user._id});
-    if(checkBan) {
-        return res.status(403).json({
-            success : false,
-            msg : 'You are banned'
-        });
-    }
 
     const isMatch = await user.matchPassword(password);
 
@@ -62,9 +55,9 @@ exports.login=async (req,res,next)=> {
     sendTokenResponse(user,200,res);
 }
 
-const sendTokenResponse = (user,statusCode,res)=> {
+const sendTokenResponse = async (user,statusCode,res)=> {
     const token = user.getSignedJwtToken();
-
+    const checkBan = await Banned.findOne({user : user._id});
     const options = {
         expires:new Date(Date.now()+process.env.JWT_COOKIE_EXPIRE*24*60*60*1000),
         httpOnly : true
@@ -73,13 +66,23 @@ const sendTokenResponse = (user,statusCode,res)=> {
     if(process.env.NODE_ENV === 'production') {
         options.secure = true;
     }
-
-    res.status(statusCode).cookie('token',token,options).json({
-        success : true,
-        token,
-        username : user.name,
-        role : user.role
-    });
+    if(checkBan) {
+        res.status(statusCode).cookie('token',token,options).json({
+            success : true,
+            token,
+            username : user.name,
+            role : user.role,
+            msg : 'Yor are banned'
+        });
+    }
+    else {
+        res.status(statusCode).cookie('token',token,options).json({
+            success : true,
+            token,
+            username : user.name,
+            role : user.role
+        });
+    }
 }
 
 //@desc Get current Logged in user

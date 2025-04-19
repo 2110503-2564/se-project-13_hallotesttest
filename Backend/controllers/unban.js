@@ -1,6 +1,6 @@
 const Banned = require('../models/Banned')
 
-exports.cron = async (req,res,next) => {
+exports.unban = async (req,res,next) => {
     try {
         const now = new Date();
         const bannedUsers = await Banned.find({});
