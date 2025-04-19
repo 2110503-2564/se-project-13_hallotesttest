@@ -3,3 +3,4 @@ Backend/node_modules/
 Backend/config/*.env
 Backend/.vercel
 .vscode/
+package-lock.json
