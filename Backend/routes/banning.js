@@ -1,5 +1,5 @@
 const express = require('express');
-const {getBannedUsers,banUser,unbanUser, getBannedUser, updateBannedUser} = require('../controllers/banning');
+const {getBannedUsers,banUser,unbanUser, getBannedUser, updateBannedUser, banOrUpdateUser} = require('../controllers/banning');
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router
 
 router
   .route('/:id')
-  .put(protect, authorize('admin'), banUser,updateBannedUser)
+  .put(protect, authorize('admin'), banOrUpdateUser)
   .delete(protect, authorize('admin'), unbanUser)
   .get(protect, authorize('admin'), getBannedUser);
 

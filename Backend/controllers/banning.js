@@ -122,35 +122,45 @@ exports.unbanUser = async (req, res, next) => {
   }
 };
 
-
-// @desc    Update a banned user
+// @desc    Ban a user or update their ban details
 // @route   PUT /api/v1/banned/:id
 // @access  Private/Admin
-exports.updateBannedUser = async (req, res, next) => {
+exports.banOrUpdateUser = async (req, res, next) => {
   try {
-    const bannedUser = await Banned.findById(req.params.id);
+    const user = await User.findById(req.params.id);
 
-    if (!bannedUser) {
+    if (!user) {
       return res.status(404).json({
         success: false,
-        message: `Banned user not found with id of ${req.params.id}`
+        message: `User not found with ID ${req.params.id}`
       });
     }
 
     const { reason, unbanDate } = req.body;
-    bannedUser.reason = reason || bannedUser.reason;
-    bannedUser.unbanDate = unbanDate || bannedUser.unbanDate;
 
-    await bannedUser.save();
+    let bannedUser = await Banned.findOne({ user: req.params.id });
+
+    if (bannedUser) {
+      bannedUser.reason = reason || bannedUser.reason;
+      bannedUser.unbanDate = unbanDate || bannedUser.unbanDate;
+      await bannedUser.save();
+    } else {
+      bannedUser = await Banned.create({
+        user: req.params.id,
+        reason,
+        unbanDate
+      });
+    }
 
     res.status(200).json({
       success: true,
       data: bannedUser
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       success: false,
-      message: 'Error updating banned user'
+      message: 'Error banning or updating ban'
     });
   }
 };
