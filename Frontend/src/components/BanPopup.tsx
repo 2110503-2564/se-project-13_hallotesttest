@@ -9,13 +9,15 @@ import { banUser } from '@/libs/banUser';
 interface BanPopupProps {
     uid: string;
     onClose: () => void;
+    prevMsg: string;
+    prevDate: string;
 }
 
-export default function BanPopup({ uid,onClose }: BanPopupProps) {
+export default function BanPopup({ uid,onClose,prevMsg,prevDate }: BanPopupProps) {
 
     const [formData, setFormData] = useState({
-        reason: '',
-        unbanDate: dayjs(),
+        reason: prevMsg,
+        unbanDate: prevDate ? dayjs(prevDate) : dayjs(),
     });
 
     const { data: session } = useSession();
@@ -23,7 +25,8 @@ export default function BanPopup({ uid,onClose }: BanPopupProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await banUser(uid, session?.user?.token || '', formData.reason, formData.unbanDate.format('YYYY-MM-DD'));
+            const response = await banUser(uid, session?.user?.token || '', formData.reason, formData.unbanDate.format('YYYY-MM-DDT00:00:00.000+07:00'));
+            window.location.reload();
             onClose();
         } catch (error) {
             console.error('Error Ban User:', error);
@@ -55,6 +58,7 @@ export default function BanPopup({ uid,onClose }: BanPopupProps) {
                           <DatePicker 
                             value={formData.unbanDate} 
                             onChange={(date) => setFormData({ ...formData, unbanDate:dayjs(date) })}
+                            minDate={dayjs().add(1, 'day')}
                             className="w-full"
                             slotProps={{ textField: { fullWidth: true } }}
                           />

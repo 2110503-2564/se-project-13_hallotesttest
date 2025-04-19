@@ -39,14 +39,18 @@ export default async function CardDetailPage({params} : {params : {cid : string}
                                             {coworkingDetail.data.address}, {coworkingDetail.data.district}, {coworkingDetail.data.province}, {coworkingDetail.data.postalcode}
                                         </p>
                                     </div>
-                                    
+                                    <div>
+                                        <p className="text-sm opacity-80">Available Time</p>
+                                        <p className="font-medium">
+                                            {coworkingDetail.data.time}
+                                        </p>
+                                    </div>
                                     <div>
                                         <p className="text-sm opacity-80">Contact</p>
                                         <p className="font-medium">
                                             {coworkingDetail.data.tel}
                                         </p>
-                                    </div>
-                                    
+                                    </div>                            
                                     <div>
                                         <p className="text-sm opacity-80">Coworking ID</p>
                                         <p className="font-medium">

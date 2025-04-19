@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import getUsers from "@/libs/getUsers";
 import getBannedUsers from "@/libs/getBannedUsers";
-import { banUser, unbanUser } from "@/libs/banUser";
 
 interface User {
   _id: string;
@@ -17,11 +16,11 @@ interface User {
 }
 import BanPopup from "@/components/BanPopup";
 import UnbanPopup from "@/components/UnbanPopup";
+import dayjs from "dayjs";
 
 // Define a type for user object to ensure type safety
 
 export default function BanUserPage() {
-
   const { data: session, status } = useSession();
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
@@ -31,25 +30,30 @@ export default function BanUserPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submittingUserId, setSubmittingUserId] = useState<string | null>(null);
+  const [bannedUserMap, setBannedUserMap] = useState<Record<string, string>>({});
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [tempCurrentPage, setTempCurrentPage] = useState(currentPage);
   const [totalPages, setTotalPages] = useState(1);
   const [showBanPopup, setShowBanPopup] = useState(false);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [showUnbanPopup, setShowUnbanPopup] = useState(false);
 
-  const handleBanClick = (uid:string) => {
+  const handleBanClick = (uid: string) => {
+    setSubmittingUserId(uid);
     setSelectedUser(uid);
     setShowBanPopup(true);
   };
 
-  const handleUnbanClick = (uid:string) => {
+  const handleUnbanClick = (uid: string) => {
+    setSubmittingUserId(uid);
     setSelectedUser(uid);
     setShowUnbanPopup(true);
   };
 
   const handleClosePopup = () => {
+    setSubmittingUserId(null);
     setShowBanPopup(false);
     setShowUnbanPopup(false);
     setSelectedUser(null);
@@ -71,7 +75,7 @@ export default function BanUserPage() {
       const bannedUsersResponse = await getBannedUsers(session.user.token);
 
       setUsers(Array.isArray(usersResponse.data) ? usersResponse.data : []);
-      setTotalPages(usersResponse.totalPages || 1);
+      setTotalPages(usersResponse.pages || 1);
 
       setBannedUserIds(
         Array.isArray(bannedUsersResponse.data)
@@ -80,6 +84,15 @@ export default function BanUserPage() {
             )
           : []
       );
+
+      const bannedMap: Record<string, string> = {};
+      if (Array.isArray(bannedUsersResponse.data)) {
+        bannedUsersResponse.data.forEach((entry: { _id: string; user: { _id: string } }) => {
+          bannedMap[entry.user._id] = entry._id;
+        });
+      }
+      setBannedUserMap(bannedMap);
+
     } catch (err: any) {
       console.error("Error fetching data:", err);
       setError(err.message || "Failed to fetch data");
@@ -88,6 +101,15 @@ export default function BanUserPage() {
     }
   };
 
+  // const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = parseInt(e.target.value, 10);
+  //   if (!isNaN(value) && value > 0) {
+  //     setItemsPerPage(value);
+  //     setCurrentPage(1); // reset to first page when itemsPerPage changes
+  //     console.log(itemsPerPage, currentPage);
+  //   }
+  // };
+
   useEffect(() => {
     if (status === "loading") return;
     if (status === "unauthenticated" || session?.user.role !== "admin") {
@@ -95,7 +117,7 @@ export default function BanUserPage() {
       return;
     }
     fetchData();
-  }, [session, status, currentPage]);
+  }, [status, currentPage, itemsPerPage, currentPage]);
 
   // const handleBanUser = async (userId: string) => {
   //   setSubmittingUserId(userId);
@@ -115,15 +137,24 @@ export default function BanUserPage() {
   //   }
   // };
 
+  // const handleUnbanUser = async (userId: string) => {
+  //   setSubmittingUserId(userId);
+  //   setError(null);
+  //   try {
+  //     if (!session?.user?.token) {
+  //       throw new Error("No token found in session");
+  //     }
 
-  const handleUnbanUser = async (userId: string) => {
-    setSubmittingUserId(userId);
-    setError(null);
-    try {
-      if (!session?.user?.token) {
-        throw new Error("No token found in session");
-      }
-
+  //     await unbanUser(userId, session.user.token);
+  //     await fetchData();
+  //   } catch (err: any) {
+  //     console.error("Error unbanning user:", err);
+  //     setError(err.message || "Failed to unban user");
+  //     alert(err.message || "Failed to unban user");
+  //   } finally {
+  //     setSubmittingUserId(null);
+  //   }
+  // };
       await unbanUser(userId, session.user.token);
       await fetchData();
     } catch (err: any) {
@@ -148,7 +179,7 @@ export default function BanUserPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-purple-50">
+      <div className="flex justify-center items-center bg-purple-50 w-full h-screen">
         <div className="text-purple-700 font-semibold">Loading users...</div>
       </div>
     );
@@ -159,31 +190,14 @@ export default function BanUserPage() {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-purple-50 min-h-screen">
+    <div className="bg-purple-50 min-h-screen w-full p-8 mx-auto flex flex-col items-center">
       <h1 className="text-2xl font-bold mb-4 text-purple-800 text-center">
         Manage Users
       </h1>
-
-      <div className="mb-4 flex justify-between items-center">
-        <input
-          type="text"
-          placeholder="Search by name or email"
-          className="shadow appearance-none border border-purple-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button className="bg-white hover:bg-white-800 w-32 h-12 ml-5 text-purple-600 font-bold py-2 px-4 rounded-xl border-2 border-purple-200 flex items-center justify-center" onClick={(e) => setBannedFilter(bannedFilter+1)}>
-          {bannedFilter % 3 === 0 ? "All Users" : bannedFilter % 3 === 1 ? "Banned Users" : "Active Users"}
-        </button>
-      </div>
-
-      <div className="overflow-x-auto shadow-lg rounded-lg">
-        <table className="min-w-full bg-white border border-purple-200">
+      <div className="shadow-lg w-full max-w-7xl rounded-lg overflow-hidden">
+        <table className="w-full bg-white border border-purple-200 rounded-lg shadow-lg">
           <thead>
             <tr className="bg-purple-100">
-              <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
-                #
-              </th>
               <th className="py-2 px-4 border-b border-purple-200 text-purple-800 text-center">
                 Name
               </th>
@@ -205,15 +219,17 @@ export default function BanUserPage() {
             {users.map((user, index) => (
               <tr
                 key={user._id}
-                className="hover:bg-purple-50"
+                className={`${
+                  bannedUserMap[user._id]
+                    ? "bg-red-50 hover:bg-red-100"
+                    : ""
+                }`}
                 onClick={(e) => {
-                  router.push(`/banuser/${user._id}`);
-                  e.stopPropagation();
+                  const banId = bannedUserMap[user._id];
+                  if (!banId) return;
+                  router.push(`/banuser/${banId}`);
                 }}
               >
-                <td className="py-2 px-4 border-b border-purple-200 text-center text-gray-700">
-                  {(currentPage - 1) * itemsPerPage + index + 1}
-                </td>
                 <td className="py-2 px-4 border-b border-purple-200 text-black text-center">
                   {user.name}
                 </td>
@@ -233,34 +249,29 @@ export default function BanUserPage() {
                 <td className="py-2 px-4 border-b border-purple-200 text-center">
                   {!bannedUserIds.includes(user._id) ? (
                     <button
-                      disabled={
-                        submittingUserId !== null &&
-                        submittingUserId !== user._id
-                      }
-                      className={`bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded ${
-                        submittingUserId !== user._id &&
-                        submittingUserId !== null
+                      className={`bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-6 rounded ${
+                        submittingUserId === user._id
                           ? "opacity-50 cursor-not-allowed"
                           : ""
                       }`}
-                      onClick={(e) => {handleBanClick(user._id); e.stopPropagation();}}
+                      onClick={(e) => {
+                        handleBanClick(user._id);
+                        e.stopPropagation();
+                      }}
                     >
                       {submittingUserId === user._id ? "Banning..." : "Ban"}
                     </button>
                   ) : (
                     <button
-                      disabled={
-                        submittingUserId !== null &&
-                        submittingUserId !== user._id
-                      }
-                      className={`bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded ${
-                        submittingUserId !== user._id &&
-                        submittingUserId !== null
+                      className={`bg-purple-600 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded ${
+                        submittingUserId === user._id
                           ? "opacity-50 cursor-not-allowed"
                           : ""
                       }`}
-
-                      onClick={(e) => {handleUnbanClick(user._id); e.stopPropagation();}}
+                      onClick={(e) => {
+                        handleUnbanClick(user._id);
+                        e.stopPropagation();
+                      }}
                     >
                       {submittingUserId === user._id ? "Unbanning..." : "Unban"}
                     </button>
@@ -273,31 +284,97 @@ export default function BanUserPage() {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex justify-center mt-6 space-x-2">
-        <button
-          className="px-4 py-2 bg-purple-300 text-white rounded disabled:opacity-50"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          Prev
-        </button>
+      <div className="flex justify-between items-center w-full max-w-7xl p-4 bg-white shadow-md rounded-xl text-sm mt-2">
+        {/* Rows per page */}
+        <div className="flex items-center gap-3">
+          <span className="text-gray-700">Rows per page</span>
+          <select
+            value={itemsPerPage}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              setItemsPerPage(value);
+              setCurrentPage(1);
+            }}
+            className="border border-purple-300 rounded-md pr-7 pl-3 py-1 focus:outline-none focus:ring-1 focus:ring-purple-400 text-gray-600 text-sm"
+          >
+            {[5, 10, 20, 50].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          <span className="text-gray-600 ">{`1 - 10 of 100 Rows`}</span>
+        </div>
 
-        <span className="px-4 py-2 text-purple-800 font-semibold">
-          Page {currentPage} of {totalPages}
-        </span>
-
-        <button
-          className="px-4 py-2 bg-purple-500 text-white rounded disabled:opacity-50"
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
+        {/* Pagination controls */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              setCurrentPage(1);
+              setTempCurrentPage(1);
+            }}
+            disabled={currentPage === 1}
+            className="text-gray-700 disabled:opacity-30 text-xl"
+          >
+            &laquo;
+          </button>
+          <button
+            onClick={() => {
+              const newPage = Math.max(currentPage - 1, 1);
+              setCurrentPage(newPage);
+              setTempCurrentPage(newPage);
+            }}
+            disabled={currentPage === 1}
+            className="text-gray-700 disabled:opacity-30 text-xl"
+          >
+            &lsaquo;
+          </button>
+          <input
+            type="text"
+            min={1}
+            max={totalPages}
+            value={tempCurrentPage}
+            onChange={(e) => setTempCurrentPage(parseInt(e.target.value, 10))}
+            onBlur={() => {
+              if (
+                tempCurrentPage > 0 &&
+                tempCurrentPage <= totalPages &&
+                tempCurrentPage !== currentPage
+              ) {
+                setCurrentPage(tempCurrentPage);
+              } else {
+                setTempCurrentPage(currentPage);
+              }
+            }}
+            className="w-12 text-center border border-purple-300 rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-purple-400 text-gray-600"
+          />
+          <span className="text-gray-700">of {totalPages}</span>
+          <button
+            onClick={() => {
+              const newPage = Math.min(currentPage + 1, totalPages);
+              setCurrentPage(newPage);
+              setTempCurrentPage(newPage);
+            }}
+            disabled={currentPage === totalPages}
+            className="text-gray-700 disabled:opacity-30 text-xl"
+          >
+            &rsaquo;
+          </button>
+          <button
+            onClick={() => {
+              setCurrentPage(totalPages);
+              setTempCurrentPage(totalPages);
+            }}
+            disabled={currentPage === totalPages}
+            className="text-gray-700 disabled:opacity-30 text-xl"
+          >
+            &raquo;
+          </button>
+        </div>
       </div>
+
       {showBanPopup && selectedUser && (
-        <BanPopup uid={selectedUser} onClose={handleClosePopup}  />
+        <BanPopup uid={selectedUser} onClose={handleClosePopup} prevMsg="" prevDate={dayjs().add(1, 'day').toString()} />
       )}
       {showUnbanPopup && selectedUser && (
         <UnbanPopup uid={selectedUser} onClose={handleClosePopup} />
