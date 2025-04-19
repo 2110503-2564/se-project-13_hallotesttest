@@ -21,6 +21,7 @@ import dayjs from "dayjs";
 // Define a type for user object to ensure type safety
 
 export default function BanUserPage() {
+
   const { data: session, status } = useSession();
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
@@ -31,6 +32,7 @@ export default function BanUserPage() {
   const [error, setError] = useState<string | null>(null);
   const [submittingUserId, setSubmittingUserId] = useState<string | null>(null);
   const [bannedUserMap, setBannedUserMap] = useState<Record<string, string>>({});
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -100,6 +102,14 @@ export default function BanUserPage() {
       setLoading(false);
     }
   };
+
+  const filteredUsers = Array.isArray(users)
+     ? users.filter(
+         (user) =>
+           user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+       )
+     : [];
 
   // const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const value = parseInt(e.target.value, 10);
@@ -194,7 +204,17 @@ export default function BanUserPage() {
       <h1 className="text-2xl font-bold mb-4 text-purple-800 text-center">
         Manage Users
       </h1>
+      
       <div className="shadow-lg w-full max-w-7xl rounded-lg overflow-hidden">
+        <div className="mb-4">
+         <input
+           type="text"
+           placeholder="Search by name or email"
+           className="shadow appearance-none border border-purple-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500"
+           value={searchTerm}
+           onChange={(e) => setSearchTerm(e.target.value)}
+         />
+       </div>
         <table className="w-full bg-white border border-purple-200 rounded-lg shadow-lg">
           <thead>
             <tr className="bg-purple-100">
@@ -216,7 +236,7 @@ export default function BanUserPage() {
             </tr>
           </thead>
           <tbody>
-            {users.map((user, index) => (
+            {filteredUsers.map((user, index) => (
               <tr
                 key={user._id}
                 className={`${
