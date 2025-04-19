@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import getBannedUser from "@/libs/getBannedUser";
 import BanPopup from "@/components/BanPopup";
+import dayjs from 'dayjs';
 
 export default function BanUserIDPage({ params }: { params: { bid: string } }) {
     const { data: session, status } = useSession();
@@ -73,7 +74,11 @@ export default function BanUserIDPage({ params }: { params: { bid: string } }) {
                                 </div>
                                 <div className="flex border-b border-gray-200 pb-2">
                                     <span className="font-semibold w-32 text-gray-600">Unban Date:</span>
-                                    <span className="text-gray-800">{banDetail.unbanDate}</span>
+                                    <span className="text-gray-800">
+                                        {banDetail.unbanDate 
+                                            ? dayjs(banDetail.unbanDate).format('DD MMM YYYY, HH:mm') 
+                                            : 'No unban date set'}
+                                    </span>
                                 </div>
                             </div>
                             <div className="mt-6 flex justify-end">
@@ -86,6 +91,8 @@ export default function BanUserIDPage({ params }: { params: { bid: string } }) {
                                 {
                                     showBanPopup && (
                                         <BanPopup
+                                            prevMsg={banDetail.reason}
+                                            prevDate={banDetail.unbanDate}
                                             uid={banDetail.user._id}
                                             onClose={handleClosePopup}
                                         />

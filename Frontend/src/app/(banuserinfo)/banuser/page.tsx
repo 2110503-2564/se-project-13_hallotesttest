@@ -16,7 +16,7 @@ interface User {
 }
 import BanPopup from "@/components/BanPopup";
 import UnbanPopup from "@/components/UnbanPopup";
-import { set } from "mongoose";
+import dayjs from "dayjs";
 
 // Define a type for user object to ensure type safety
 
@@ -351,7 +351,7 @@ export default function BanUserPage() {
       </div>
 
       {showBanPopup && selectedUser && (
-        <BanPopup uid={selectedUser} onClose={handleClosePopup} />
+        <BanPopup uid={selectedUser} onClose={handleClosePopup} prevMsg="" prevDate={dayjs().add(1, 'day').toString()} />
       )}
       {showUnbanPopup && selectedUser && (
         <UnbanPopup uid={selectedUser} onClose={handleClosePopup} />

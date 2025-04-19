@@ -9,13 +9,15 @@ import { banUser } from '@/libs/banUser';
 interface BanPopupProps {
     uid: string;
     onClose: () => void;
+    prevMsg: string;
+    prevDate: string;
 }
 
-export default function BanPopup({ uid,onClose }: BanPopupProps) {
+export default function BanPopup({ uid,onClose,prevMsg,prevDate }: BanPopupProps) {
 
     const [formData, setFormData] = useState({
-        reason: '',
-        unbanDate: dayjs(),
+        reason: prevMsg,
+        unbanDate: prevDate ? dayjs(prevDate) : dayjs(),
     });
 
     const { data: session } = useSession();
@@ -56,7 +58,7 @@ export default function BanPopup({ uid,onClose }: BanPopupProps) {
                           <DatePicker 
                             value={formData.unbanDate} 
                             onChange={(date) => setFormData({ ...formData, unbanDate:dayjs(date) })}
-                            minDate={dayjs()}
+                            minDate={dayjs().add(1, 'day')}
                             className="w-full"
                             slotProps={{ textField: { fullWidth: true } }}
                           />
