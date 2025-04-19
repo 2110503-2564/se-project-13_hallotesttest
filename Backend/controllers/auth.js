@@ -1,5 +1,5 @@
 const User = require('../models/User');
-
+const Banned = require('../models/Banned');
 exports.register = async (req,res,next)=> {
     try {
         const {name,email,tel,password,role} = req.body;
@@ -39,6 +39,13 @@ exports.login=async (req,res,next)=> {
     if(!user) {
         return res.status(400).json({success:false,
             msg : 'Invalid credentials'
+        });
+    }
+    const checkBan = await Banned.findOne({user : user._id});
+    if(checkBan) {
+        return res.status(403).json({
+            success : false,
+            msg : 'You are banned'
         });
     }
 
