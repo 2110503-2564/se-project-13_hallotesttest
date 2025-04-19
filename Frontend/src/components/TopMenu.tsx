@@ -37,7 +37,7 @@ export default async function TopMenu() {
           ) : (
             <div className="flex flex-row gap-2">
               <TopMenuItem title="Sign in" pageRef="/api/auth/signin" />
-              <TopMenuItem title="Register" pageRef="/register" />
+              <TopMenuItem title="Register" pageRef="/api/auth/register" />
             </div>
           )}
         </div>
