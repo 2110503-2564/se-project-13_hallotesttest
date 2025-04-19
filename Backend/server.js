@@ -70,7 +70,7 @@ app.use('/api/v1/auth', auth);
 
 app.use('/api/v1/banned', banned);
 app.use('/api/v1/users', users);
-app.use('/cron',cron);
+app.use('/cron', cron);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, console.log('Server running in ', process.env.NODE_ENV, ' mode on port', PORT));
