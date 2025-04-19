@@ -56,6 +56,7 @@ export default function BanPopup({ uid,onClose }: BanPopupProps) {
                           <DatePicker 
                             value={formData.unbanDate} 
                             onChange={(date) => setFormData({ ...formData, unbanDate:dayjs(date) })}
+                            minDate={dayjs()}
                             className="w-full"
                             slotProps={{ textField: { fullWidth: true } }}
                           />

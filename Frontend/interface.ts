@@ -26,13 +26,6 @@ interface CoworkingItem {
     bookDate: string;
   }
   
-  interface BannedUser {
-    _id: string;
-    user: string;
-    reason: string;
-    unbanDate: string;
-  }
-
   interface User{
     _id: string;
     name: string;
@@ -41,4 +34,12 @@ interface CoworkingItem {
     password: string;
     role: string;
     createdAt: string;
+  }
+
+  interface BannedUser {
+    reason: string;
+    unbanDate: string;
+    user : User;
+    __v : string;
+    _id : string;
   }

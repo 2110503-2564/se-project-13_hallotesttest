@@ -28,6 +28,7 @@ export default function BanUserPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submittingUserId, setSubmittingUserId] = useState<string | null>(null);
+  const [bannedUserMap, setBannedUserMap] = useState<Record<string, string>>({});
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -81,6 +82,15 @@ export default function BanUserPage() {
             )
           : []
       );
+
+      const bannedMap: Record<string, string> = {};
+      if (Array.isArray(bannedUsersResponse.data)) {
+        bannedUsersResponse.data.forEach((entry: { _id: string; user: { _id: string } }) => {
+          bannedMap[entry.user._id] = entry._id;
+        });
+      }
+      setBannedUserMap(bannedMap);
+
     } catch (err: any) {
       console.error("Error fetching data:", err);
       setError(err.message || "Failed to fetch data");
@@ -187,13 +197,14 @@ export default function BanUserPage() {
               <tr
                 key={user._id}
                 className={`${
-                  bannedUserIds.includes(user._id)
+                  bannedUserMap[user._id]
                     ? "bg-red-50 hover:bg-red-100"
                     : ""
                 }`}
                 onClick={(e) => {
-                  if (!bannedUserIds.includes(user._id)) return;
-                  router.push(`/banuser/${user._id}`);
+                  const banId = bannedUserMap[user._id];
+                  if (!banId) return;
+                  router.push(`/banuser/${banId}`);
                 }}
               >
                 <td className="py-2 px-4 border-b border-purple-200 text-black text-center">
