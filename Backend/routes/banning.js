@@ -1,5 +1,5 @@
 const express = require('express');
-const {getBannedUsers,banUser,unbanUser, getBannedUser, updateBannedUser, banOrUpdateUser} = require('../controllers/banning');
+const {getBannedUsers,unbanUser,getBannedUser,banOrUpdateUser} = require('../controllers/banning');
 
 const router = express.Router();
 
