@@ -85,7 +85,7 @@ export default function BanUserPage() {
       if (!session?.user?.token) {
         throw new Error("No token found in session");
       }
-
+      
       const usersResponse = await getUsers(
         session.user.token,
         currentPage,
