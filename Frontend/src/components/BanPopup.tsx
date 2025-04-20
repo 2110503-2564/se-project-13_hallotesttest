@@ -43,7 +43,7 @@ export default function BanPopup({ uid,onClose,prevMsg,prevDate }: BanPopupProps
                             Reason for Ban
                         </label>
                         <textarea
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                             rows={3}
                             value={formData.reason}
                             onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
