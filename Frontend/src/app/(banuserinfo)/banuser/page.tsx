@@ -152,10 +152,10 @@ export default function BanUserPage() {
               <div className="flex flex-row justify-between items-center">
                 <div className="flex items-center">
                   <button
-                    className={`mt-8 rounded-md w-[100px] border border-black bg-white px-5 py-2 text-center text-black text-base font-normal cursor-pointer mx-10 ${
+                    className={`mt-8 rounded-md w-[100px] px-5 py-2 text-center text-base font-normal cursor-pointer mx-10 ${
                       filterAdmin
                         ? "bg-purple-700 hover:bg-purple-600 text-white border border-purple-800"
-                        : "bg-white hover:bg-gray-100"
+                        : "bg-white hover:bg-gray-100 border border-black text-black"
                     } `}
                     onClick={(e) => {
                       setFilterAdmin(!filterAdmin);
@@ -168,10 +168,10 @@ export default function BanUserPage() {
                 </div>
                 <div className="flex items-center">
                   <button
-                    className={`mt-8 rounded-md w-[100px] border border-black bg-white px-5 py-2 text-center text-black text-base font-normal cursor-pointer mx-10 ${
+                    className={`mt-8 rounded-md w-[100px] px-5 py-2 text-center text-black text-base font-normal cursor-pointer mx-10 ${
                       filterUser
                         ? "bg-purple-700 hover:bg-purple-600 text-white border border-purple-800"
-                        : "bg-white hover:bg-gray-100"
+                        : "bg-white hover:bg-gray-100 border border-black text-black"
                     } `}
                     onClick={(e) => {
                       setFilterUser(!filterUser);
@@ -190,10 +190,10 @@ export default function BanUserPage() {
               <div className="flex flex-row justify-between items-center">
                 <div className="flex items-center">
                   <button
-                    className={`mt-8 rounded-md w-[100px] border border-black bg-white px-5 py-2 text-center text-black text-base font-normal cursor-pointer mx-10 ${
+                    className={`mt-8 rounded-md w-[100px] px-5 py-2 text-center text-black text-base font-normal cursor-pointer mx-10 ${
                       filterActive
                         ? "bg-purple-700 hover:bg-purple-600 text-white border border-purple-800"
-                        : "bg-white hover:bg-gray-100"
+                        : "bg-white hover:bg-gray-100 border border-black text-black"
                     } `}
                     onClick={(e) => {
                       setFilterActive(!filterActive);
@@ -206,10 +206,10 @@ export default function BanUserPage() {
                 </div>
                 <div className="flex items-center">
                   <button
-                    className={`mt-8 rounded-md w-[100px] border border-black bg-white px-5 py-2 text-center text-black text-base font-normal cursor-pointer mx-10 ${
+                    className={`mt-8 rounded-md w-[100px] px-5 py-2 text-center text-black text-base font-normal cursor-pointer mx-10 ${
                       filterBanned
                         ? "bg-purple-700 hover:bg-purple-600 text-white border border-purple-800"
-                        : "bg-white hover:bg-gray-100"
+                        : "bg-white hover:bg-gray-100 border border-black text-black"
                     } `}
                     onClick={(e) => {
                       setFilterBanned(!filterBanned);
