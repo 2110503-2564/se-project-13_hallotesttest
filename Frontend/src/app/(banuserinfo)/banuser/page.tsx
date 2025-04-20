@@ -45,7 +45,7 @@ export default function BanUserPage() {
   const [filterAdmin, setFilterAdmin] = useState(false);
   const [filterUser, setFilterUser] = useState(false);
   const [filterBanned, setFilterBanned] = useState(false);
-  const [filterActive, setFilterActive] = useState(false); 
+  const [filterActive, setFilterActive] = useState(false);
 
   const handleBanClick = (uid: string) => {
     setSubmittingUserId(uid);
@@ -85,7 +85,7 @@ export default function BanUserPage() {
       if (!session?.user?.token) {
         throw new Error("No token found in session");
       }
-      
+
       const usersResponse = await getUsers(
         session.user.token,
         currentPage,
@@ -125,7 +125,7 @@ export default function BanUserPage() {
     ? users.filter(
         (user) =>
           (user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+            user.email?.toLowerCase().includes(searchTerm.toLowerCase())) &&
           (!filterAdmin || user.role === "admin") &&
           (!filterUser || user.role === "user") &&
           (!filterActive || !bannedUserIds.includes(user._id)) &&
@@ -148,7 +148,9 @@ export default function BanUserPage() {
         <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
           <div className="space-y-6">
             <div>
-              <h2 className="mt-5 font-bold text-2xl text-purple-700 mb-3">Role</h2>
+              <h2 className="mt-5 font-bold text-2xl text-purple-700 mb-3">
+                Role
+              </h2>
               <div className="flex flex-row justify-between items-center">
                 <div className="flex items-center">
                   <button
@@ -186,7 +188,9 @@ export default function BanUserPage() {
             </div>
 
             <div>
-              <h2 className="mt-8 font-bold text-2xl text-purple-700 mb-3">Status</h2>
+              <h2 className="mt-8 font-bold text-2xl text-purple-700 mb-3">
+                Status
+              </h2>
               <div className="flex flex-row justify-between items-center">
                 <div className="flex items-center">
                   <button
@@ -358,7 +362,9 @@ export default function BanUserPage() {
               <tr
                 key={user._id}
                 className={`${
-                  bannedUserMap[user._id] ? "bg-red-50 hover:bg-red-100" : ""
+                  bannedUserMap[user._id]
+                    ? "bg-red-50 hover:bg-red-100 cursor-pointer "
+                    : ""
                 }`}
                 onClick={(e) => {
                   const banId = bannedUserMap[user._id];
