@@ -1,6 +1,5 @@
 const Reservation = require('../models/Reservation');
 const CoWorking = require('../models/CoWorking');
-
 //@desc Get all reservations
 //@route GET /api/v1/reservations
 //@access Public
@@ -17,7 +16,7 @@ exports.getReservations = async (req, res, next) => {
     } else {
         if (req.params.coWorkingId) {
             console.log(req.params.coWorkingId);
-            query = Reservation.find({coWorking : req.coWorkingId}).populate({
+            query = Reservation.find({coWorking : req.params.coWorkingId}).populate({
                 path: 'coWorking',
                 select: 'name province tel'
             }).populate({

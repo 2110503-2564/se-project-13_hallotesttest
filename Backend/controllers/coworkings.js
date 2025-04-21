@@ -1,6 +1,6 @@
 const Reservation = require('../models/Reservation.js');
 const CoWorking = require('../models/CoWorking.js');
-
+const Review = require('../models/Review');
 
 exports.getCoWorkings = async (req, res, next) => {
     try {
@@ -115,6 +115,7 @@ exports.deleteCoWorking = async (req, res, next) => {
         }
         await Reservation.deleteMany({ coWorking: req.params.id });
         await CoWorking.deleteOne({ _id: req.params.id });
+        await Review.deleteMany({CoWorkingId : req.params.id});
         res.status(200).json({ success: true, data: {} });
     } catch (err) {
         res.status(400).json({ success: false });
