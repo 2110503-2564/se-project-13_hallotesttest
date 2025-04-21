@@ -3,15 +3,20 @@
 export default function NotiPopup({
   message,
   onClose,
+  onSubmit,
   title = "",
   description = "",
+  type,
 }: {
   message: string;
   onClose: () => void;
+  onSubmit?: () => void;
   title?: string;
   description?: string;
+  type?: string;
 }) {
-  const isSuccess = title.toLowerCase() === "success";
+  const isSuccess = type?.toLowerCase() === "success";
+  type = type?.toLowerCase();
 
   const color = {
     iconBg: isSuccess ? "bg-green-100" : "bg-red-100",
@@ -39,12 +44,18 @@ export default function NotiPopup({
               strokeWidth={2}
               viewBox="0 0 24 24"
             >
-              {isSuccess ? (
+              {type === "success" ? (
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   d="M5 13l4 4L19 7"
                 />
+              ) : type === "warning" ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11 4h2v12h-2V4zM11 20h2v2h-2v-2z"
+                ></path>
               ) : (
                 <path
                   strokeLinecap="round"
@@ -59,12 +70,29 @@ export default function NotiPopup({
           {description && (
             <p className="mb-6 text-sm text-gray-500">{description}</p>
           )}
-          <button
-            className={`px-6 py-2 bg-gradient-to-r ${color.buttonFrom} ${color.buttonTo} text-white rounded-full font-semibold shadow ${color.buttonHoverFrom} ${color.buttonHoverTo} transition`}
-            onClick={onClose}
-          >
-            Close
-          </button>
+          {type === "warning" ? (
+            <div className="flex justify-between gap-4 ">
+              <button
+                className={`px-6 py-2 bg-black opacity-30 text-white rounded-full font-semibold shadow ${color.buttonHoverFrom} ${color.buttonHoverTo} transition`}
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+              <button
+                className={`px-6 py-2 bg-gradient-to-r ${color.buttonFrom} ${color.buttonTo} text-white rounded-full font-semibold shadow ${color.buttonHoverFrom} ${color.buttonHoverTo} transition`}
+                onClick={onSubmit}
+              >
+                Yes
+              </button>
+            </div>
+          ) : (
+            <button
+              className={`px-6 py-2 bg-gradient-to-r ${color.buttonFrom} ${color.buttonTo} text-white rounded-full font-semibold shadow ${color.buttonHoverFrom} ${color.buttonHoverTo} transition`}
+              onClick={onClose}
+            >
+              Close
+            </button>
+          )}
         </div>
       </div>
       <style jsx>{`
