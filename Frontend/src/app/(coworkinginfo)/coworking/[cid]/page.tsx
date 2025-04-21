@@ -2,10 +2,13 @@ import Image from 'next/image'
 import getCoworking from '@/libs/getCoworking'
 import Link from 'next/link'
 import getDirectGoogleDriveUrl from '@/libs/getDirectGoogleDriveUrl'
+import RatingForm from '@/components/RatingForm'
+import { getServerSession } from 'next-auth'
+
 
 export default async function CardDetailPage({params} : {params : {cid : string}}) {
     const coworkingDetail = await getCoworking(params.cid)
-    
+    const session = await getServerSession();
     return (
         <main className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 min-h-screen py-12 px-4 sm:px-6">
             <div className="container mx-auto max-w-4xl">
@@ -27,7 +30,7 @@ export default async function CardDetailPage({params} : {params : {cid : string}
                         
                         {/* Details container with matching height */}
                         <div className="w-full md:w-1/2 text-white flex flex-col h-auto min-h-[400px]">
-                            <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 shadow-lg flex-grow">
+                            <div className="bg-white/20 rounded-xl p-6 shadow-lg flex-grow">
                                 <h2 className="text-xl font-semibold border-b border-white/30 pb-2 mb-4">
                                     Details
                                 </h2>
@@ -51,12 +54,6 @@ export default async function CardDetailPage({params} : {params : {cid : string}
                                             {coworkingDetail.data.tel}
                                         </p>
                                     </div>                            
-                                    <div>
-                                        <p className="text-sm opacity-80">Coworking ID</p>
-                                        <p className="font-medium">
-                                            {params.cid}
-                                        </p>
-                                    </div>
                                 </div>
                             </div>
                             
@@ -68,9 +65,14 @@ export default async function CardDetailPage({params} : {params : {cid : string}
                                     Back to All Spaces
                                 </Link>
                             </div>
+                            
                         </div>
+                        
                     </div>
                 </div>
+                {
+                    session ? <RatingForm cid={params.cid}/> : ""
+                }
             </div>
         </main>
     )

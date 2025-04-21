@@ -43,3 +43,12 @@ interface CoworkingItem {
     __v : string;
     _id : string;
   }
+  
+  interface RatingItem {
+    _id : string,
+    coWorkingId: string,
+    userId: string,
+    rating: number,
+    comment: string,
+    createdAt: string,
+  }

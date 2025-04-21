@@ -13,6 +13,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^7.0.2",
     "@mui/material": "^5.16.7",
     "@mui/x-date-pickers": "^7.13.0",
     "@reduxjs/toolkit": "^2.2.8",
