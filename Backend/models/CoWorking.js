@@ -43,7 +43,7 @@
  CoWorkingSchema.virtual('reservations', {
     ref : 'Reservation',
     localField:'_id',
-    foreignField:'coworking',
+    foreignField:'coWorking',
     justOne:false
  });
 

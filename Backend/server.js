@@ -15,6 +15,7 @@ const reservations = require('./routes/reservations');
 const auth = require('./routes/auth');
 const banned = require('./routes/banning');
 const users = require('./routes/user');
+const reviews = require('./routes/reviews');
 
 dotenv.config({ path: './config/config.env' });
 
@@ -67,7 +68,7 @@ app.use(cookieParser());
 app.use('/api/v1/coworkings', coworkings);
 app.use('/api/v1/reservations', reservations);
 app.use('/api/v1/auth', auth);
-
+app.use('/api/v1/reviews',reviews);
 app.use('/api/v1/banned', banned);
 app.use('/api/v1/users', users);
 app.use('/unban', unban);

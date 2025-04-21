@@ -47,17 +47,29 @@ module.exports = router;
  *         description: List of reservations
  *       401:
  *         description: Unauthorized
+ */
+
+/**
+ * @swagger
+ * /coworkings/{coWorkingId}/reservations:
  *   post:
  *     summary: Create a new reservation
  *     tags: [Reservations]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: coWorkingId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Co-Working Space ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ReservationInput'
+ *             $ref: '#/components/schemas/Reservation'
  *     responses:
  *       201:
  *         description: Reservation created
@@ -68,7 +80,6 @@ module.exports = router;
  *       403:
  *         description: Forbidden
  */
-
 /**
  * @swagger
  * /reservations/{id}:
@@ -109,7 +120,13 @@ module.exports = router;
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ReservationInput'
+ *             type: object
+ *             properties:
+ *               reservDate:
+ *                 type: string
+ *                 format : date-time
+ *               coWorking:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Reservation updated
@@ -149,24 +166,12 @@ module.exports = router;
  * @swagger
  * components:
  *   schemas:
- *     ReservationInput:
+ *     Reservation:
  *       type: object
  *       properties:
- *         date:
+ *         reservDate:
  *           type: string
  *           format: date-time
- *         user:
- *           type: string
- *           description: ID of the user making the reservation
- *         service:
- *           type: string
- *           description: ID of the service being reserved
- *         notes:
- *           type: string
- *       required:
- *         - date
- *         - user
- *         - service
  *
  *   securitySchemes:
  *     bearerAuth:
