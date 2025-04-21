@@ -326,7 +326,7 @@ export default function BanUserPage() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <button
-          className="ml-4 px-4 py-1 font-bold rounded-full border border-purple-300 text-purple-500 bg-purple-100/30 hover:bg-purple-100 transition font-semibold"
+          className="ml-4 px-4 py-1 font-bold rounded-full border border-purple-300 text-purple-500 bg-purple-100/30 hover:bg-purple-100 transition "
           onClick={(e) => {
             e.stopPropagation();
             handleFilterClick();
