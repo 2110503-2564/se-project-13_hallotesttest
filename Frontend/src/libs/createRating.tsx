@@ -1,4 +1,9 @@
 export default async function createRating({rating, comment, token, cid}: {rating: number, comment : string, token: string, cid : string}) {
+
+    if(rating <= 0 || rating > 5) {
+        throw new Error("Rating must be between 1 and 5");
+    }
+
   const formData = {
     rating: rating,
     comment: comment,

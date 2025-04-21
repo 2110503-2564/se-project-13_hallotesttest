@@ -1,15 +1,19 @@
-'use client'
+'use client';
 import { useState } from "react";
 import Rating from '@mui/material/Rating';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useSession } from "next-auth/react";
 import createRating from "@/libs/createRating";
+import NotiPopup from "@/components/NotiPopup";
 
-export default function RatingForm({cid} : {cid : string}) {
+export default function RatingForm({ cid }: { cid: string }) {
 
     const [ratingValue, setRatingValue] = useState<number>(0);
     const [comment, setComment] = useState<string>('');
-    const {data : session} = useSession();
+    const [popupMessage, setPopupMessage] = useState<string>('');
+    const [titleMessage, setTitleMessage] = useState<string>('');
+    const [showPopup, setShowPopup] = useState<boolean>(false);
+    const { data: session } = useSession();
 
     const handleSubmit = async () => {
         try {
@@ -21,15 +25,26 @@ export default function RatingForm({cid} : {cid : string}) {
             });
             setRatingValue(0);
             setComment('');
-        } catch(err) {
-            alert(err);
-            console.error("Failed to submit rating:", err);
+            setTitleMessage('Success');
+            setPopupMessage("Rating submitted successfully!");
+            setShowPopup(true);
+        } catch (err) {
+            setTitleMessage('Error');
+            setPopupMessage("" + err);
+            setShowPopup(true);
         }
-    }
+    };
 
     return (
         <main className="w-full bg-white/10 rounded-2xl mt-4">
-            
+            {showPopup && (
+                <NotiPopup
+                    message={popupMessage}
+                    title={titleMessage}
+                    onClose={() => setShowPopup(false)}
+                />
+            )}
+
             <div className="flex flex-col rounded-xl p-6 shadow-xl">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="font-bold text-white text-2xl">Write Your Feedback</h2>
@@ -38,7 +53,7 @@ export default function RatingForm({cid} : {cid : string}) {
                         size="large"
                         value={ratingValue}
                         onChange={(e, newValue) => {
-                            setRatingValue(newValue ? newValue : 0);
+                            setRatingValue(newValue || 0);
                         }}
                     />
                 </div>
@@ -48,28 +63,24 @@ export default function RatingForm({cid} : {cid : string}) {
                     rows={4}
                     onChange={(e) => setComment(e.target.value)}
                 />
-                <div className="flex justify-between items-center mt-6 ">
+                <div className="flex justify-between items-center mt-6">
                     <div className="flex items-center">
-                       <AccountCircle 
-                        sx={{ color: 'action.active', fontSize: 40 }} 
-                        />
+                        <AccountCircle sx={{ color: 'white', fontSize: 40 }} />
                         {
                             session?.user?.username ? (
-                                <span className="text-white ml-2 text-semibold">Feedback by : {session.user.username}</span>
+                                <span className="text-white ml-2 font-semibold">Feedback by : {session.user.username}</span>
                             ) : (
                                 <span className="text-white ml-2">Anonymous</span>
                             )
                         }
-
                     </div>
                     <button
-                        className="w-[50%] shadow-xl py-2  bg-white/20 hover:bg-white/30 rounded-lg text-white font-medium transition-colors"
+                        className="w-[50%] shadow-xl py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white font-medium transition-colors"
                         onClick={handleSubmit}
                     >
                         Submit
                     </button>
                 </div>
-                
             </div>
         </main>
     );
