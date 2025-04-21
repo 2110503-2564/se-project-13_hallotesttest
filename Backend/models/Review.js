@@ -6,6 +6,11 @@ const ReviewSchema = new mongoose.Schema({
         ref : 'CoWorking',
         required : true
     },
+    UserId : {
+        type : mongoose.Schema.ObjectId,
+        ref : 'User',
+        requried : true
+    },
     rating : {
         type : Number,
         default : 0

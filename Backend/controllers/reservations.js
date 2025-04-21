@@ -17,7 +17,7 @@ exports.getReservations = async (req, res, next) => {
     } else {
         if (req.params.coWorkingId) {
             console.log(req.params.coWorkingId);
-            query = Reservation.find().populate({
+            query = Reservation.find({coWorking : req.coWorkingId}).populate({
                 path: 'coWorking',
                 select: 'name province tel'
             }).populate({

@@ -13,6 +13,10 @@ const BannedSchema=new mongoose.Schema({
     },
     unbanDate : {
         type : Date
+    },
+    createdAt:{
+        type: Date,
+        default:Date.now
     }
 });
 
