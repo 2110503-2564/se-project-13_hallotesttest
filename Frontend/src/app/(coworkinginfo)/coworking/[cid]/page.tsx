@@ -8,6 +8,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 import { get } from 'http'
 import getCoworkingRating from '@/libs/getCoworkingRating'
 import ReviewsCard from '@/components/ReviewsCard'
+import EditReviewCard from '@/components/EditReviewCard'
 
 
 export default async function CardDetailPage({params} : {params : {cid : string}}) {
@@ -15,6 +16,7 @@ export default async function CardDetailPage({params} : {params : {cid : string}
     const coworkingDetail = await getCoworking(params.cid)
     const session = await getServerSession(authOptions);
     const reviews = await getCoworkingRating(params.cid);
+    const review = reviews.data.find((review: { userId: string }) => review.userId === session?.user._id);
 
     return (
         <main className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 min-h-screen py-12 px-4 sm:px-6">
@@ -78,7 +80,8 @@ export default async function CardDetailPage({params} : {params : {cid : string}
                     </div>
                 </div>
                 {
-                    session ? <RatingForm cid={params.cid}/> : ""
+                    session ? (reviews && reviews.data && Array.isArray(reviews.data) && reviews.data.some((review: { userId: string }) => review.userId === session.user._id) 
+                    ? <EditReviewCard review={review}/> : <RatingForm cid={params.cid}/>) : ""
                 }
                 {
                     reviews && reviews.data && Array.isArray(reviews.data) && 
