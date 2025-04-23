@@ -3,9 +3,15 @@ const Review = require('../models/Review');
 exports.getReviews = async (req,res,next) => {
     let query;
     if(req.params.coWorkingId) {
-        query = Review.find({CoWorkingId : req.params.coWorkingId});
+        query = Review.find({CoWorkingId : req.params.coWorkingId}).populate({
+            path : 'UserId',
+            select : 'name email'
+        });
     }
-    else query = Review.find({});
+    else query = Review.find({}).populate({
+        path : 'UserId',
+        select : 'name email'
+    });
     try {
         const reviews = await query;
         return res.status(200).json({
