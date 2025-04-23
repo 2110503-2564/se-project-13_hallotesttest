@@ -4,11 +4,18 @@ import Link from 'next/link'
 import getDirectGoogleDriveUrl from '@/libs/getDirectGoogleDriveUrl'
 import RatingForm from '@/components/RatingForm'
 import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
+import { get } from 'http'
+import getCoworkingRating from '@/libs/getCoworkingRating'
+import ReviewsCard from '@/components/ReviewsCard'
 
 
 export default async function CardDetailPage({params} : {params : {cid : string}}) {
+
     const coworkingDetail = await getCoworking(params.cid)
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
+    const reviews = await getCoworkingRating(params.cid);
+
     return (
         <main className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 min-h-screen py-12 px-4 sm:px-6">
             <div className="container mx-auto max-w-4xl">
@@ -72,6 +79,14 @@ export default async function CardDetailPage({params} : {params : {cid : string}
                 </div>
                 {
                     session ? <RatingForm cid={params.cid}/> : ""
+                }
+                {
+                    reviews && reviews.data && Array.isArray(reviews.data) && 
+                    reviews.data.map((review : RatingItem) => (
+                        <div key={review._id} className="mt-6">
+                            <ReviewsCard review={review}/>
+                        </div>
+                    )) 
                 }
             </div>
         </main>
