@@ -5,6 +5,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
 export default async function TopMenu() {
   const session = await getServerSession(authOptions);
+  console.log(session?.user.role);
 
   return (
     <div className={styles.menucontainer}>
