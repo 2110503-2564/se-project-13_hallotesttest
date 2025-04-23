@@ -19,6 +19,7 @@ interface CoworkingJson {
   data: CoworkingItem[]
 }
 
+<<<<<<< HEAD
 interface BookingItem {
   nameLastname: string;
   tel: string;
@@ -52,3 +53,21 @@ interface RatingItem {
   comment: string,
   createdAt: string,
 }
+=======
+  interface BannedUser {
+    reason: string;
+    unbanDate: string;
+    user : User;
+    __v : string;
+    _id : string;
+  }
+  
+  interface RatingItem {
+    _id : string,
+    CoWorkingId: string,
+    UserId: string,
+    rating: number,
+    comment: string,
+    createdAt: string,
+  }
+>>>>>>> 87c8a900b274409e4e976f425c91da9d1cd041d4
