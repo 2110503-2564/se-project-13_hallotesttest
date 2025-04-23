@@ -46,8 +46,8 @@ interface CoworkingItem {
   
   interface RatingItem {
     _id : string,
-    coWorkingId: string,
-    userId: string,
+    CoWorkingId: string,
+    UserId: string,
     rating: number,
     comment: string,
     createdAt: string,
