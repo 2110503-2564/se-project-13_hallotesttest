@@ -71,6 +71,7 @@ const sendTokenResponse = async (user,statusCode,res)=> {
             success : true,
             token,
             username : user.name,
+            email : user.email,
             role : user.role,
             msg : 'Yor are banned'
         });
@@ -80,6 +81,7 @@ const sendTokenResponse = async (user,statusCode,res)=> {
             success : true,
             token,
             username : user.name,
+            email : user.email,
             role : user.role
         });
     }
