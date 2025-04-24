@@ -1,4 +1,4 @@
-export interface CoworkingItem {
+interface CoworkingItem {
   _id: string,
   name: string,
   address: string,
@@ -12,21 +12,21 @@ export interface CoworkingItem {
   id: string
 }
 
-export interface CoworkingJson {
+interface CoworkingJson {
   success: boolean,
   count: number,
   pagination: Object,
   data: CoworkingItem[]
 }
 
-export interface BookingItem {
+interface BookingItem {
   nameLastname: string;
   tel: string;
   coWorking: string;
   bookDate: string;
 }
 
-export interface User{
+interface User{
   _id: string;
   name: string;
   email: string;
@@ -36,7 +36,7 @@ export interface User{
   createdAt: string;
 }
 
-export interface BannedUser {
+interface BannedUser {
   reason: string;
   unbanDate: string;
   user : User;
@@ -44,10 +44,14 @@ export interface BannedUser {
   _id : string;
 }
 
-export interface RatingItem {
+interface RatingItem {
   _id : string,
   CoWorkingId: string,
-  UserId: {_id: string, name: string, email: string},
+  UserId: {
+    _id: string,
+    name: string,
+    email: string,
+  }
   rating: number,
   comment: string,
   createdAt: string,

@@ -1,4 +1,3 @@
-import { RatingItem } from "../../interface";
 import Star from '@mui/icons-material/Star';
 import StarBorder from '@mui/icons-material/StarBorder';
 

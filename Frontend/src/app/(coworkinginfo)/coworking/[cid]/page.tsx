@@ -9,7 +9,6 @@ import { get } from 'http'
 import getCoworkingRating from '@/libs/getCoworkingRating'
 import ReviewsCard from '@/components/ReviewsCard'
 import EditReviewCard from '@/components/EditReviewCard'
-import { RatingItem } from '../../../../../interface'
 import Rating from '@mui/material/Rating'
 import Box from '@mui/material/Box'
 import StarIcon from '@mui/icons-material/Star'
@@ -19,7 +18,7 @@ export default async function CardDetailPage({ params }: { params: { cid: string
     const coworkingDetail = await getCoworking(params.cid)
     const session = await getServerSession(authOptions);
     const reviews = await getCoworkingRating(params.cid);
-    const review = reviews.data.find((review: { userId: string }) => review.userId === session?.user._id);
+    const review = reviews.data.find((review:RatingItem) => review.UserId.email === session?.user.email);
 
     // Calculate average score
     const averageScore = reviews.data.length > 0
@@ -89,7 +88,7 @@ export default async function CardDetailPage({ params }: { params: { cid: string
                 </div>
 
                 {
-                    session ? (reviews && reviews.data && Array.isArray(reviews.data) && reviews.data.some((review: { userId: string }) => review.userId === session.user._id)
+                    session ? (reviews && reviews.data && Array.isArray(reviews.data) && reviews.data.some((review:RatingItem) => review.UserId.email === session.user.email)
                         ? <EditReviewCard review={review} /> : <RatingForm cid={params.cid} />) : ""
                 }
 
