@@ -3,8 +3,8 @@ export default async function editReview(rid : string, rating : number, comment 
         throw new Error("Review ID is required.");
     }
 
-    if(!rating || !comment) {
-        throw new Error("Rating and comment are required.");
+    if(!rating) {
+        throw new Error("Rating is required.");
     }
 
     if(rating < 1 || rating > 5) {

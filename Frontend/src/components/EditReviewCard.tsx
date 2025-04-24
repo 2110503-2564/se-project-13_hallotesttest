@@ -4,25 +4,58 @@ import React, { useState } from "react";
 import Rating from "@mui/material/Rating";
 import { useSession } from "next-auth/react";
 import editReview from "@/libs/editReview";
+import deleteReview from "@/libs/deleteReview";
+import NotiPopup from "./NotiPopup";
 
 export default function EditReviewCard({ review }: { review: RatingItem }) {
   const { data: session } = useSession();
   const [rating, setRating] = useState<number>(review.rating);
   const [comment, setComment] = useState<string>(review.comment);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupTitle, setPopupTitle] = useState("");
+  const [popupMessage, setPopupMessage] = useState("");
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await editReview(review._id, rating, comment, session?.user.token || "")
+      const res = await editReview(
+        review._id,
+        rating,
+        comment,
+        session?.user.token || ""
+      )
         .then((res) => {
           console.log("Review updated successfully:", res);
-          window.location.reload();
+        });
+      setPopupTitle("Success");
+      setPopupMessage("Review updated successfully!");
+      setShowPopup(true);
+    } catch (error) {
+      console.error("Error updating review:", error);
+      setPopupTitle("Error");
+      setPopupMessage("" + error);
+      setShowPopup(true);
+    }
+  };
+
+  const handleDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await deleteReview(review._id, session?.user.token || "")
+        .then((res) => {
+          console.log("Review deleted successfully:", res);
         })
         .catch((error) => {
-          console.error("Error updating review:", error);
+          console.error("Error deleting review:", error);
         });
+      setPopupTitle("Success");
+      setPopupMessage("Review deleted successfully!");
+      setShowPopup(true);
     } catch (error) {
       console.error("Error:", error);
+      setPopupTitle("Error");
+      setPopupMessage("" + error);
+      setShowPopup(true);
     }
   };
 
@@ -80,11 +113,30 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
           >
             Update
           </button>
-          <button className="w-[100px] shadow-xl py-2 bg-white/10 hover:bg-white/30 rounded-lg text-white font-medium transition-colors">
+          <button
+            className="w-[100px] shadow-xl py-2 bg-white/10 hover:bg-white/30 rounded-lg text-white font-medium transition-colors"
+            onClick={(e) => {
+              handleDelete(e);
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
             Delete
           </button>
         </div>
       </div>
+      {showPopup && (
+        <NotiPopup
+          message={popupMessage}
+          title={popupTitle}
+          onClose={() => {
+            setShowPopup(false);
+            if(popupTitle === "Success") {
+              window.location.reload();
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
