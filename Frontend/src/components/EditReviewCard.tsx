@@ -129,9 +129,10 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
           type={popupTitle}
           onClose={() => {
             setShowPopup(false);
-            if(popupTitle === "Success") {
-              window.location.reload();
-            }
+            window.location.reload();
+            // if(popupTitle === "Success") {
+            //   window.location.reload();
+            // }
           }}
         />
       )}
