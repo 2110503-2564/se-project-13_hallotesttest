@@ -7,8 +7,10 @@ import editReview from "@/libs/editReview";
 import deleteReview from "@/libs/deleteReview";
 import NotiPopup from "./NotiPopup";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import { useRouter } from "next/navigation";
 
 export default function EditReviewCard({ review }: { review: RatingItem }) {
+  const router = useRouter();
   const { data: session } = useSession();
   const [rating, setRating] = useState<number>(review.rating);
   const [comment, setComment] = useState<string>(review.comment);
@@ -32,6 +34,7 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
       setPopupTitle("Success");
       setPopupMessage("Review updated successfully!");
       setShowPopup(true);
+      router.refresh();
     } catch (error) {
       console.error("Error updating review:", error);
       setPopupTitle("Error");
@@ -59,6 +62,7 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
       setPopupType("Success");
       setPopupMessage("Review deleted successfully!");
       setShowPopup(true);
+      router.refresh();
     } catch (error) {
       setPopupTitle("Error");
       setPopupType("Error");
@@ -143,10 +147,6 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
           type={popupTitle}
           onClose={() => {
             setShowPopup(false);
-            window.location.reload();
-            // if(popupTitle === "Success") {
-            //   window.location.reload();
-            // }
           }}
         />
       )}
