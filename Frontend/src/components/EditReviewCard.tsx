@@ -43,9 +43,6 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
     e.preventDefault();
     try {
       const res = await deleteReview(review._id, session?.user.token || "")
-        .then((res) => {
-          console.log("Review deleted successfully:", res);
-        })
         .catch((error) => {
           console.error("Error deleting review:", error);
         });
@@ -129,6 +126,7 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
         <NotiPopup
           message={popupMessage}
           title={popupTitle}
+          type={popupTitle}
           onClose={() => {
             setShowPopup(false);
             if(popupTitle === "Success") {

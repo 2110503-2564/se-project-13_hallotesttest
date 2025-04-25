@@ -37,10 +37,11 @@ export default function RatingForm({ cid }: { cid: string }) {
   return (
     <main className="w-full bg-white/10 rounded-2xl mt-4">
       {showPopup && (
-        <NotiPopup
-          message={popupMessage}
+      <NotiPopup
+        message={popupMessage}
           title={titleMessage}
-          onClose={() => setShowPopup(false)}
+          type={titleMessage}
+          onClose={() => { setShowPopup(false); window.location.reload(); }}
         />
       )}
 
