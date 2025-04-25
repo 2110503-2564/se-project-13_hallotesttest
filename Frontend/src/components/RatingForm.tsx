@@ -5,7 +5,6 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useSession } from "next-auth/react";
 import createRating from "@/libs/createRating";
 import NotiPopup from "@/components/NotiPopup";
-import { title } from "process";
 
 export default function RatingForm({ cid }: { cid: string }) {
   const [ratingValue, setRatingValue] = useState<number>(0);
@@ -62,12 +61,19 @@ export default function RatingForm({ cid }: { cid: string }) {
             }}
           />
         </div>
-        <textarea
-          placeholder="Your comment..."
-          className="w-full rounded-lg bg-white/40 resize-none placeholder-gray-500 outline-none text-white shadow-lg"
-          rows={4}
-          onChange={(e) => setComment(e.target.value)}
-        />
+        <div className="relative">
+          <textarea
+            placeholder="Your comment..."
+            className="w-full rounded-lg bg-white/40 resize-none placeholder-gray-500 outline-none text-white shadow-lg p-3 pr-16"
+            rows={4}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            maxLength={200}
+          />
+          <p className="absolute bottom-3 right-3 text-sm text-gray-300">
+            {comment.length}/200
+          </p>
+        </div>
         <div className="flex justify-between items-center mt-6">
           <div className="flex items-center">
             <AccountCircle sx={{ color: "white", fontSize: 40 }} />

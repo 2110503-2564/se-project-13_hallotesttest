@@ -15,13 +15,13 @@ export default function ReviewsCard({review} : {review : RatingItem}){
                             i < review.rating ? (
                                 <Star
                                     key={i}
-                                    className="text-yellow-400 transition-transform hover:scale-125 cursor-pointer"
+                                    className="text-yellow-400 transition-transform"
                                     fontSize="medium"
                                 />
                             ) : (
                                 <StarBorder
                                     key={i}
-                                    className="text-yellow-400 transition-transform hover:scale-125 cursor-pointer"
+                                    className="text-yellow-400 transition-transform"
                                     fontSize="medium"
                                 />
                             )
