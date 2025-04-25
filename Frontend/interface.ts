@@ -42,6 +42,7 @@ interface BannedUser {
   user : User;
   __v : string;
   _id : string;
+  createdAt: string,
 }
 
 interface RatingItem {

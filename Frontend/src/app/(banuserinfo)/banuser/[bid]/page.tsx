@@ -73,6 +73,14 @@ export default function BanUserIDPage({ params }: { params: { bid: string } }) {
                                     <span className="text-gray-800">{banDetail.reason}</span>
                                 </div>
                                 <div className="flex border-b border-gray-200 pb-2">
+                                    <span className="font-semibold w-32 text-gray-600">Ban Date:</span>
+                                    <span className="text-gray-800">
+                                        {banDetail.createdAt 
+                                            ? dayjs(banDetail.createdAt).format('DD MMM YYYY, HH:mm') 
+                                            : 'No Ban Date'}
+                                    </span>
+                                </div>
+                                <div className="flex border-b border-gray-200 pb-2">
                                     <span className="font-semibold w-32 text-gray-600">Unban Date:</span>
                                     <span className="text-gray-800">
                                         {banDetail.unbanDate 
