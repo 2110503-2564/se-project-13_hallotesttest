@@ -1,17 +1,18 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
+
+async function signIn(page: Page) {
+  await page.goto('http://localhost:3000/');
+  await page.getByRole('link', { name: 'Sign in' }).click();
+  await page.getByRole('textbox', { name: 'Email' }).fill('chitipat.put@gmail.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('123456');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+}
 
 test('test add reviews', async ({ page }) => {
   //Sign in to the application
-  await page.goto('http://localhost:3000/');
-  await expect(page).toHaveTitle(/Space Co-Working/)
-  await page.getByRole('link', { name: 'Sign in' }).click();
-  await page.getByRole('textbox', { name: 'Email' }).click();
-  await page.getByRole('textbox', { name: 'Email' }).fill('chitipat.put@gmail.com');
-  await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('123456');
-  await page.getByRole('button', { name: 'Sign In' }).click();
-  await expect(page.getByRole('link', { name: 'Sign out of Achi' })).toBeVisible();
+  signIn(page);
   //Test add review
+  await expect(page.getByRole('link', { name: 'Sign out of Achi' })).toBeVisible();
   await page.getByRole('link', { name: 'View Co-Working Space(s)' }).click();
   await page.getByRole('link', { name: 'Co-Working Picture Samyan Op-' }).click();
   await expect(page.getByRole('heading', { name: 'Samyan Op-Co' })).toBeVisible();
@@ -39,14 +40,7 @@ test('test add reviews', async ({ page }) => {
 
 test('test update reiew', async ({ page }) => {
   //Sign in to the application
-  await page.goto('http://localhost:3000/');
-  await expect(page).toHaveTitle(/Space Co-Working/)
-  await page.getByRole('link', { name: 'Sign in' }).click();
-  await page.getByRole('textbox', { name: 'Email' }).click();
-  await page.getByRole('textbox', { name: 'Email' }).fill('chitipat.put@gmail.com');
-  await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('123456');
-  await page.getByRole('button', { name: 'Sign In' }).click();
+  signIn(page);
   //Update review
   await expect(page.getByRole('link', { name: 'Sign out of Achi' })).toBeVisible();
   await page.getByRole('link', { name: 'View Co-Working Space(s)' }).click();
@@ -69,14 +63,7 @@ test('test update reiew', async ({ page }) => {
 
 test('test delete review', async ({ page }) => {
   //Sign in to the application
-  await page.goto('http://localhost:3000/');
-  await expect(page).toHaveTitle(/Space Co-Working/)
-  await page.getByRole('link', { name: 'Sign in' }).click();
-  await page.getByRole('textbox', { name: 'Email' }).click();
-  await page.getByRole('textbox', { name: 'Email' }).fill('chitipat.put@gmail.com');
-  await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('123456');
-  await page.getByRole('button', { name: 'Sign In' }).click();
+  signIn(page);;
   //Test delete review
   await expect(page.getByRole('link', { name: 'Sign out of Achi' })).toBeVisible();
   await page.getByRole('link', { name: 'View Co-Working Space(s)' }).click();
@@ -84,9 +71,13 @@ test('test delete review', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Update Your Feedback' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Update' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Delete' })).toBeVisible();
+  await expect(page.getByText('2.8')).toBeVisible();
   await page.getByRole('button', { name: 'Delete' }).click();
   await expect(page.getByRole('heading', { name: 'Success' })).toBeVisible();
   await page.getByRole('button', { name: 'Close' }).click();
   await expect(page.getByRole('heading', { name: 'Write Your Feedback' })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Your comment...' })).toBeEmpty();
+  //update average
+  await expect(page.getByText('3.2')).toBeVisible();
 });
 
