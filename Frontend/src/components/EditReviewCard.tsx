@@ -15,6 +15,8 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
   const [showPopup, setShowPopup] = useState(false);
   const [popupTitle, setPopupTitle] = useState("");
   const [popupMessage, setPopupMessage] = useState("");
+  const [popupType, setPopupType] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,10 +26,9 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
         rating,
         comment,
         session?.user.token || ""
-      )
-        .then((res) => {
-          console.log("Review updated successfully:", res);
-        });
+      ).then((res) => {
+        console.log("Review updated successfully:", res);
+      });
       setPopupTitle("Success");
       setPopupMessage("Review updated successfully!");
       setShowPopup(true);
@@ -39,22 +40,23 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
     }
   };
 
-  const handleDelete = async (e: React.FormEvent) => {
+  const handleDeleteClick = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    setShowConfirm(false);
     try {
-      const res = await deleteReview(review._id, session?.user.token || "")
-        .then((res) => {
-          console.log("Review deleted successfully:", res);
-        })
-        .catch((error) => {
-          console.error("Error deleting review:", error);
-        });
+      await deleteReview(review._id, session?.user.token || "");
       setPopupTitle("Success");
+      setPopupType("Success");
       setPopupMessage("Review deleted successfully!");
       setShowPopup(true);
     } catch (error) {
-      console.error("Error:", error);
       setPopupTitle("Error");
+      setPopupType("Error");
       setPopupMessage("" + error);
       setShowPopup(true);
     }
@@ -75,22 +77,22 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
       </div>
 
       <div className="relative">
-          <textarea
-            placeholder="Your comment..."
-            className="w-full rounded-lg bg-white/40 resize-none placeholder-gray-500 outline-none text-white shadow-lg p-3 pr-16"
-            rows={4}
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            maxLength={200}
-          />
-          <p className="absolute bottom-3 right-3 text-sm text-gray-300">
-            {comment.length}/200
-          </p>
+        <textarea
+          placeholder="Your comment..."
+          className="w-full rounded-lg bg-white/40 resize-none placeholder-gray-500 outline-none text-white shadow-lg p-3 pr-16"
+          rows={4}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          maxLength={200}
+        />
+        <p className="absolute bottom-3 right-3 text-sm text-gray-300">
+          {comment.length}/200
+        </p>
       </div>
-      
+
       <div className="flex items-center justify-between space-x-4">
         <div className="flex items-center space-x-2">
-        <div className="flex items-center">
+          <div className="flex items-center">
             <AccountCircle sx={{ color: "white", fontSize: 40 }} />
             {session?.user?.username ? (
               <span className="text-white ml-2 font-semibold">
@@ -100,7 +102,6 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
               <span className="text-white ml-2">Anonymous</span>
             )}
           </div>
-          
         </div>
         <div className="ml-auto space-x-2">
           <button
@@ -115,23 +116,29 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
           </button>
           <button
             className="w-[100px] shadow-xl py-2 bg-white/10 hover:bg-white/30 rounded-lg text-white font-medium transition-colors"
-            onClick={(e) => {
-              handleDelete(e);
-              e.preventDefault();
-              e.stopPropagation();
-            }}
+            onClick={handleDeleteClick}
           >
             Delete
           </button>
         </div>
       </div>
+      {showConfirm && (
+        <NotiPopup
+          message="Are you sure you want to delete this review?"
+          title="Confirm Delete"
+          type="warning"
+          onClose={() => setShowConfirm(false)}
+          onSubmit={handleConfirmDelete}
+        />
+      )}
       {showPopup && (
         <NotiPopup
           message={popupMessage}
           title={popupTitle}
+          type={popupType}
           onClose={() => {
             setShowPopup(false);
-            if(popupTitle === "Success") {
+            if (popupTitle === "Success") {
               window.location.reload();
             }
           }}

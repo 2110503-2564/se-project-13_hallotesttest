@@ -5,14 +5,17 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useSession } from "next-auth/react";
 import createRating from "@/libs/createRating";
 import NotiPopup from "@/components/NotiPopup";
+import { useRouter } from "next/navigation";
 
 export default function RatingForm({ cid }: { cid: string }) {
+  const router = useRouter();
   const [ratingValue, setRatingValue] = useState<number>(0);
   const [comment, setComment] = useState<string>("");
   const [popupMessage, setPopupMessage] = useState<string>("");
   const [titleMessage, setTitleMessage] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const { data: session } = useSession();
+  const [popupType, setPopupType] = useState("");
 
   const handleSubmit = async () => {
     try {
@@ -25,10 +28,13 @@ export default function RatingForm({ cid }: { cid: string }) {
       setRatingValue(0);
       setComment("");
       setTitleMessage("Success");
+      setPopupType("Success");
       setPopupMessage("Rating submitted successfully!");
       setShowPopup(true);
+      router.refresh();
     } catch (err) {
       setTitleMessage("Error");
+      setPopupType("Error");
       setPopupMessage("" + err);
       setShowPopup(true);
     }
@@ -40,6 +46,7 @@ export default function RatingForm({ cid }: { cid: string }) {
         <NotiPopup
           message={popupMessage}
           title={titleMessage}
+          type={popupType}
           onClose={() => setShowPopup(false)}
         />
       )}
