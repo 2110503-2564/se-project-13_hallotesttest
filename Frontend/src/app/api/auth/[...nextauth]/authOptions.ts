@@ -1,36 +1,40 @@
+import { z } from 'zod'
 import { AuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import userLogIn from '@/libs/userLogIn';
+import userLogIn from '@/libs/userLogIn'
+
+// Define schema using zod
+const credentialsSchema = z.object({
+  email: z.string().email({ message: "Invalid email format" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+})
 
 export const authOptions: AuthOptions = {
   pages: {
-    signIn: 'login', // Path to your custom sign-in page
-    signOut: 'logout', // Path to your custom sign-out page
-    error: 'error', // Path to your custom error page
+    signIn: 'login',
+    signOut: 'logout',
+    error: 'error',
   },
   providers: [
     CredentialsProvider({
-      // The name to display on the sign in form (e.g. "Sign in with...")
       name: "Credentials",
-      // `credentials` is used to generate a form on the sign in page.
-      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
         email: { label: "Email", type: "email", placeholder: "Email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        if (!credentials) return null
-        const user = await userLogIn(credentials.email, credentials.password);
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          return user
-        } else {
-          // If you return null then an error will be displayed advising the user to check their details.
-          return null
+        try {
+          const validatedCredentials = credentialsSchema.parse(credentials)
 
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+          const user = await userLogIn(validatedCredentials.email, validatedCredentials.password)
+          if (user) {
+            return user
+          } else {
+            return null
+          }
+        } catch (err) {
+          console.error("Validation error:", err)
+          throw new Error("Invalid email or password format")
         }
       }
     })
@@ -40,12 +44,12 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       return { ...token, ...user }
     },
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       session.user = token as any
-      return session;
+      return session
     },
     async redirect({ url, baseUrl }) {
-      return baseUrl; // Always redirect to home page (`/`)
+      return baseUrl
     },
   }
 }
