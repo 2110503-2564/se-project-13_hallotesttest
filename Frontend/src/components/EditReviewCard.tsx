@@ -49,7 +49,12 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
   const handleConfirmDelete = async () => {
     setShowConfirm(false);
     try {
-      await deleteReview(review._id, session?.user.token || "");
+      const res = await deleteReview(
+        review._id,
+        session?.user.token || ""
+      ).catch((error) => {
+        console.error("Error deleting review:", error);
+      });
       setPopupTitle("Success");
       setPopupType("Success");
       setPopupMessage("Review deleted successfully!");
@@ -135,12 +140,13 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
         <NotiPopup
           message={popupMessage}
           title={popupTitle}
-          type={popupType}
+          type={popupTitle}
           onClose={() => {
             setShowPopup(false);
-            if (popupTitle === "Success") {
-              window.location.reload();
-            }
+            window.location.reload();
+            // if(popupTitle === "Success") {
+            //   window.location.reload();
+            // }
           }}
         />
       )}
