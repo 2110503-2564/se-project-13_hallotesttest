@@ -1,7 +1,7 @@
 const CoWorkingStats = require("../models/CoWorkingStats");
 
 exports.getStats = async (req, res, next) => {
-  let query = CoWorkingStats.find().populate("CoWorking");
+  let query = CoWorkingStats.find().populate("CoWorkingId");
   try {
     const coworkingstats = await query;
     return res.status(200).json({
@@ -20,7 +20,7 @@ exports.getStats = async (req, res, next) => {
 exports.getStat = async (req, res, next) => {
   let query = CoWorkingStats.find({
     CoWorkingId: req.params.coWorkingId,
-  }).populate("CoWorking");
+  }).populate("CoWorkingId");
   try {
     const coworkingstats = await query;
     return res.status(200).json({
