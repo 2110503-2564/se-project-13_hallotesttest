@@ -116,6 +116,7 @@ exports.updateReview = async (req, res, next) => {
       data: review,
     });
   } catch (error) {
+    console.log(error);
     res.status(400).json({
       success: false,
       message: "Cannot Update Review",
@@ -156,6 +157,7 @@ exports.deleteReview = async (req, res, next) => {
       data: {},
     });
   } catch (error) {
+    console.log(error);
     res.status(400).json({
       success: false,
       message: "Cannot Delete Review",

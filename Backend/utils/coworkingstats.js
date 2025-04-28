@@ -47,7 +47,7 @@ const updateDeletedAverageRating = async (coWorkingId, reviewId, oldRating) => {
     { averageRating: newAverage, reviewCount: newReviewCount },
     { new: true }
   );
-
+  console.log("yo");
   return { averageRating: newAverage, reviewCount: newReviewCount };
 };
 
