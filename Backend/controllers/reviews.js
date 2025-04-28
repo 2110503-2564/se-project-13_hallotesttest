@@ -98,12 +98,19 @@ exports.updateReview = async (req, res, next) => {
         message: `User ${req.user.id} is not authorized to update this review`,
       });
     }
-
+    const oldRating = review.rating;
     review = await Review.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
-
+    const stats = await CoWorkingStats.findOne({
+      CoWorkingId: review.CoWorkingId,
+    });
+    if (stats) {
+      await updateEditAverageRating(review.CoWorkingId, review._id, oldRating);
+    } else {
+      await createAverageRating(review.CoWorkingId);
+    }
     res.status(200).json({
       success: true,
       data: review,
@@ -132,9 +139,18 @@ exports.deleteReview = async (req, res, next) => {
         message: `User ${req.user.id} is not authorized to delete this review`,
       });
     }
-
+    const CoWorkingId = review.CoWorkingId;
+    const ReviewId = review._id;
+    const OldRating = review.rating;
     await review.deleteOne();
-
+    const stats = await CoWorkingStats.findOne({
+      CoWorkingId: review.CoWorkingId,
+    });
+    if (stats) {
+      await updateDeletedAverageRating(CoWorkingId, ReviewId, OldRating);
+    } else {
+      await createAverageRating(CoWorkingId);
+    }
     res.status(200).json({
       success: true,
       data: {},

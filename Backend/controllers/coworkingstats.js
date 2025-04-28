@@ -42,7 +42,7 @@ exports.deleteStat = async (req, res, next) => {
     if (!coworkingstats) {
       return res.status(404).json({
         success: false,
-        message: `No reservation with the id of ${req.params.id}`,
+        message: `No CoWorking with the id of ${req.params.id}`,
       });
     }
 
