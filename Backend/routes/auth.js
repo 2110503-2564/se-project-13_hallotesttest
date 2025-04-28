@@ -17,17 +17,16 @@ module.exports = router;
  * @swagger
  * tags:
  *   name: Authentication
- *   description: Authentication related endpoints
+ *   description: User registration, login, profile and logout
  */
 
 /**
  * @swagger
- * /auth/register:
+ * /api/v1/auth/register:
  *   post:
  *     summary: Register a new user
  *     tags: [Authentication]
  *     requestBody:
- *       description: User registration data
  *       required: true
  *       content:
  *         application/json:
@@ -50,17 +49,16 @@ module.exports = router;
  *       201:
  *         description: User registered successfully
  *       400:
- *         description: Bad request
+ *         description: Validation error
  */
 
 /**
  * @swagger
- * /auth/login:
+ * /api/v1/auth/login:
  *   post:
  *     summary: Login a user
  *     tags: [Authentication]
  *     requestBody:
- *       description: User credentials for login
  *       required: true
  *       content:
  *         application/json:
@@ -76,33 +74,37 @@ module.exports = router;
  *                 type: string
  *     responses:
  *       200:
- *         description: Login successful
+ *         description: Login successful, returns token
+ *       400:
+ *         description: Missing credentials or invalid
  *       401:
- *         description: Unauthorized
+ *         description: Invalid credentials
  */
 
 /**
  * @swagger
- * /auth/me:
+ * /api/v1/auth/me:
  *   get:
- *     summary: Get user profile
+ *     summary: Get current logged-in user
  *     tags: [Authentication]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: The current user profile
+ *         description: Current user data
  *       401:
  *         description: Unauthorized
  */
 
 /**
  * @swagger
- * /auth/logout:
+ * /api/v1/auth/logout:
  *   get:
- *     summary: Logout the user
+ *     summary: Logout the user (clear cookie)
  *     tags: [Authentication]
  *     responses:
  *       200:
- *         description: User logged out successfully
+ *         description: Logged out successfully
+ *       401:
+ *         description: No active session
  */

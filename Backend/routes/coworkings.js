@@ -29,6 +29,10 @@ module.exports = router;
 
 /**
  * @swagger
+ * tags:
+ *   name: CoWorkings
+ *   description: Manage co-working spaces
+ *
  * components:
  *   schemas:
  *     CoWorking:
@@ -41,72 +45,74 @@ module.exports = router;
  *         - postalcode
  *         - time
  *       properties:
- *         id:
+ *         _id:
  *           type: string
- *           description: The auto-generated id of the Co-Working space
  *         name:
  *           type: string
- *           description: The name of the Co-Working space
  *         address:
  *           type: string
- *           description: The address of the Co-Working space
  *         district:
  *           type: string
- *           description: The district where the space is located
  *         province:
  *           type: string
- *           description: The province where the space is located
  *         postalcode:
  *           type: string
- *           description: The postal code
  *         tel:
  *           type: string
- *           description: Telephone number
+ *         picture:
+ *           type: string
  *         time:
  *           type: string
- *           description: Open-close time
- *       example:
- *         id: 60f7c9d5b54764421b7156c1
- *         name: "Tech Hub Coworking"
- *         address: "123 Tech Street"
- *         district: "Central"
- *         province: "CA"
- *         postalcode: "12345"
- *         tel: "123-456-7890"
- *         time: "09:00-18:00"
- *
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
  */
 
 /**
  * @swagger
- * tags:
- *   name: CoWorkings
- *   description: Co-Working space management
- */
-
-/**
- * @swagger
- * /coworkings:
+ * /api/v1/coworkings:
  *   get:
- *     summary: Get all Co-Working spaces
+ *     summary: Get all co-working spaces
  *     tags: [CoWorkings]
+ *     parameters:
+ *       - in: query
+ *         name: select
+ *         schema:
+ *           type: string
+ *         description: Fields to select (comma separated)
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *         description: Sort order (comma separated)
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Pagination limit
  *     responses:
  *       200:
- *         description: List of Co-Working spaces
+ *         description: List of co-working spaces
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/CoWorking'
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 count:
+ *                   type: integer
+ *                 pagination:
+ *                   type: object
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/CoWorking'
  *
  *   post:
- *     summary: Create a new Co-Working space
+ *     summary: Create a new co-working space
  *     tags: [CoWorkings]
  *     security:
  *       - bearerAuth: []
@@ -118,50 +124,46 @@ module.exports = router;
  *             $ref: '#/components/schemas/CoWorking'
  *     responses:
  *       201:
- *         description: The Co-Working space was successfully created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/CoWorking'
+ *         description: Created co-working space
  *       400:
- *         description: Bad request
+ *         description: Validation error
  */
 
 /**
  * @swagger
- * /coworkings/{id}:
+ * /api/v1/coworkings/{id}:
  *   get:
- *     summary: Get a Co-Working space by id
+ *     summary: Get a co-working space by ID
  *     tags: [CoWorkings]
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: The Co-Working space id
+ *         description: CoWorking ID
  *     responses:
  *       200:
- *         description: Co-Working space information
+ *         description: Co-working space data
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/CoWorking'
  *       404:
- *         description: Co-Working space not found
+ *         description: Not found
  *
  *   put:
- *     summary: Update a Co-Working space
+ *     summary: Update a co-working space
  *     tags: [CoWorkings]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: The Co-Working space id
+ *         description: CoWorking ID
  *     requestBody:
  *       required: true
  *       content:
@@ -170,31 +172,27 @@ module.exports = router;
  *             $ref: '#/components/schemas/CoWorking'
  *     responses:
  *       200:
- *         description: The Co-Working space was updated
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/CoWorking'
+ *         description: Updated co-working space
  *       400:
- *         description: Bad request
+ *         description: Validation error
  *       404:
- *         description: Co-Working space not found
+ *         description: Not found
  *
  *   delete:
- *     summary: Delete a Co-Working space
+ *     summary: Delete a co-working space
  *     tags: [CoWorkings]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: The Co-Working space id
+ *         description: CoWorking ID
  *     responses:
  *       200:
- *         description: The Co-Working space was deleted successfully
+ *         description: Deleted successfully
  *       404:
- *         description: Co-Working space not found
+ *         description: Not found
  */

@@ -31,29 +31,35 @@ module.exports = router;
  * @swagger
  * tags:
  *   name: Reservations
- *   description: Reservation related endpoints
+ *   description: Manage reservations for co-working spaces
+ *
+ * components:
+ *   schemas:
+ *     Reservation:
+ *       type: object
+ *       required:
+ *         - reservDate
+ *         - coWorking
+ *       properties:
+ *         _id:
+ *           type: string
+ *         reservDate:
+ *           type: string
+ *           format: date-time
+ *         coWorking:
+ *           type: string
+ *         user:
+ *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
  */
 
 /**
  * @swagger
- * /reservations:
+ * /api/v1/coworkings/{coWorkingId}/reservations:
  *   get:
- *     summary: Get all reservations
- *     tags: [Reservations]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: List of reservations
- *       401:
- *         description: Unauthorized
- */
-
-/**
- * @swagger
- * /coworkings/{coWorkingId}/reservations:
- *   post:
- *     summary: Create a new reservation
+ *     summary: Get all reservations for a co-working space or current user
  *     tags: [Reservations]
  *     security:
  *       - bearerAuth: []
@@ -62,8 +68,19 @@ module.exports = router;
  *         name: coWorkingId
  *         schema:
  *           type: string
- *         required: true
- *         description: Co-Working Space ID
+ *         required: false
+ *         description: Optional CoWorking ID to filter
+ *     responses:
+ *       200:
+ *         description: List of reservations
+ *       401:
+ *         description: Unauthorized
+ *
+ *   post:
+ *     summary: Create a reservation
+ *     tags: [Reservations]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -74,34 +91,33 @@ module.exports = router;
  *       201:
  *         description: Reservation created
  *       400:
- *         description: Bad request
+ *         description: Validation error
  *       401:
  *         description: Unauthorized
- *       403:
- *         description: Forbidden
  */
+
 /**
  * @swagger
- * /reservations/{id}:
+ * /api/v1/reservations/{id}:
  *   get:
- *     summary: Get a single reservation by ID
+ *     summary: Get a reservation by ID
  *     tags: [Reservations]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
  *         description: Reservation ID
  *     responses:
  *       200:
  *         description: Reservation details
- *       404:
- *         description: Reservation not found
  *       401:
  *         description: Unauthorized
+ *       404:
+ *         description: Not found
  *
  *   put:
  *     summary: Update a reservation
@@ -111,33 +127,25 @@ module.exports = router;
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
  *         description: Reservation ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               reservDate:
- *                 type: string
- *                 format : date-time
- *               coWorking:
- *                 type: string
+ *             $ref: '#/components/schemas/Reservation'
  *     responses:
  *       200:
- *         description: Reservation updated
+ *         description: Updated reservation
  *       400:
- *         description: Bad request
- *       404:
- *         description: Reservation not found
+ *         description: Validation error
  *       401:
  *         description: Unauthorized
- *       403:
- *         description: Forbidden
+ *       404:
+ *         description: Not found
  *
  *   delete:
  *     summary: Delete a reservation
@@ -147,35 +155,15 @@ module.exports = router;
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
  *         description: Reservation ID
  *     responses:
  *       200:
- *         description: Reservation deleted
- *       404:
- *         description: Reservation not found
+ *         description: Deleted successfully
  *       401:
  *         description: Unauthorized
- *       403:
- *         description: Forbidden
- */
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     Reservation:
- *       type: object
- *       properties:
- *         reservDate:
- *           type: string
- *           format: date-time
- *
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
+ *       404:
+ *         description: Not found
  */

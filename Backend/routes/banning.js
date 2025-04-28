@@ -22,45 +22,40 @@ module.exports = router;
  * @swagger
  * tags:
  *   name: Banning
- *   description: Ban and unban users
- */
-
-/**
- * @swagger
+ *   description: Ban, update ban or unban users (admin only)
+ *
  * components:
  *   schemas:
  *     Banned:
  *       type: object
- *       properties:
- *         _id:
- *           type: string
- *           description: Banned record ID
- *         user:
- *           type: string
- *           description: The ID of the banned user
- *         reason:
- *           type: string
- *           description: Reason for the ban
- *         unbanDate:
- *           type: string
- *           format: date
- *           description: Date (at 00:00) when the user will be unbanned
  *       required:
  *         - user
  *         - reason
+ *       properties:
+ *         _id:
+ *           type: string
+ *         user:
+ *           type: string
+ *           description: ID of the banned user
+ *         reason:
+ *           type: string
+ *         unbanDate:
+ *           type: string
+ *           format: date
+ *           description: dd-mm-yyyy at 00:00 when ban expires
  */
 
 /**
  * @swagger
- * /banned:
+ * /api/v1/banned:
  *   get:
- *     summary: Get all banned users
+ *     summary: List all banned users
  *     tags: [Banning]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of banned users
+ *         description: Array of banned records
  *         content:
  *           application/json:
  *             schema:
@@ -82,9 +77,9 @@ module.exports = router;
 
 /**
  * @swagger
- * /banned/{id}:
+ * /api/v1/banned/{id}:
  *   get:
- *     summary: Get a banned user by ID
+ *     summary: Get details of a banned record
  *     tags: [Banning]
  *     security:
  *       - bearerAuth: []
@@ -97,7 +92,7 @@ module.exports = router;
  *         description: Banned record ID
  *     responses:
  *       200:
- *         description: Banned user retrieved
+ *         description: Banned record found
  *         content:
  *           application/json:
  *             schema:
@@ -113,8 +108,9 @@ module.exports = router;
  *         description: Forbidden
  *       404:
  *         description: Not found
+ *
  *   put:
- *     summary: Ban or update ban details for a user
+ *     summary: Create or update a ban for a user
  *     tags: [Banning]
  *     security:
  *       - bearerAuth: []
@@ -124,42 +120,37 @@ module.exports = router;
  *         schema:
  *           type: string
  *         required: true
- *         description: User ID
+ *         description: User ID to ban
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - reason
  *             properties:
  *               reason:
  *                 type: string
  *               unbanDate:
  *                 type: string
  *                 format: date
- *                 description: dd-mm-yyyy format at 00:00
- *             required:
- *               - reason
  *     responses:
  *       200:
- *         description: User banned or ban updated
+ *         description: Ban created or updated
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   $ref: '#/components/schemas/Banned'
+ *               $ref: '#/components/schemas/Banned'
  *       400:
- *         description: Bad request
+ *         description: Validation error
  *       401:
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
+ *
  *   delete:
- *     summary: Unban a user
+ *     summary: Unban a user (remove ban)
  *     tags: [Banning]
  *     security:
  *       - bearerAuth: []
@@ -169,20 +160,10 @@ module.exports = router;
  *         schema:
  *           type: string
  *         required: true
- *         description: User ID
+ *         description: Banned record or User ID
  *     responses:
  *       200:
- *         description: User unbanned successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- *                   description: Empty object
+ *         description: Unbanned successfully
  *       401:
  *         description: Unauthorized
  *       403:

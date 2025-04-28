@@ -17,12 +17,17 @@ module.exports = router;
  * @swagger
  * tags:
  *   name: Users
- *   description: User management
+ *   description: User management (admin only)
  *
  * components:
  *   schemas:
  *     User:
  *       type: object
+ *       required:
+ *         - _id
+ *         - name
+ *         - email
+ *         - role
  *       properties:
  *         _id:
  *           type: string
@@ -37,18 +42,13 @@ module.exports = router;
  *         createdAt:
  *           type: string
  *           format: date-time
- *       required:
- *         - _id
- *         - name
- *         - email
- *         - role
  */
 
 /**
  * @swagger
  * /api/v1/users:
  *   get:
- *     summary: Get all users
+ *     summary: Get all users with pagination
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -62,29 +62,10 @@ module.exports = router;
  *         name: limit
  *         schema:
  *           type: integer
- *         description: Number of users per page (default 10)
+ *         description: Items per page (default 10)
  *     responses:
  *       200:
  *         description: Paginated list of users
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 count:
- *                   type: integer
- *                 total:
- *                   type: integer
- *                 page:
- *                   type: integer
- *                 pages:
- *                   type: integer
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
  *       401:
  *         description: Unauthorized
  *       403:

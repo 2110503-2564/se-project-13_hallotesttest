@@ -40,67 +40,46 @@ module.exports = router
  *       properties:
  *         _id:
  *           type: string
- *           description: Auto-generated review ID
  *         CoWorkingId:
  *           type: string
- *           description: ID of the co-working space reviewed
  *         UserId:
  *           type: string
- *           description: ID of the user who wrote the review
  *         comment:
  *           type: string
- *           description: Review content
  *         rating:
  *           type: integer
- *           description: Rating score (0-5)
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: Date when the review was created
  */
 
 /**
  * @swagger
- * /coworkings/{coWorkingId}/reviews:
+ * /api/v1/coworkings/{coWorkingId}/reviews:
  *   get:
- *     summary: Get all reviews for a Co-Working space
+ *     summary: Get all reviews for a co-working space
  *     tags: [Reviews]
  *     parameters:
  *       - in: path
  *         name: coWorkingId
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: Co-working space ID
  *     responses:
  *       200:
  *         description: Array of reviews
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 count:
- *                   type: integer
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Review'
  *
  *   post:
- *     summary: Add a review to a Co-Working space
+ *     summary: Add a review
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: coWorkingId
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: Co-working space ID
  *     requestBody:
  *       required: true
  *       content:
@@ -108,7 +87,7 @@ module.exports = router
  *           schema:
  *             type: object
  *             required:
- *               - text
+ *               - comment
  *               - rating
  *             properties:
  *               comment:
@@ -117,22 +96,17 @@ module.exports = router
  *                 type: integer
  *     responses:
  *       201:
- *         description: Review created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Review'
+ *         description: Created review
  *       400:
- *         description: Bad request
+ *         description: Validation error
  *       401:
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
  */
-
 /**
  * @swagger
- * /reviews/{id}:
+ * /api/v1/coworkings/{coWorkingId}/reviews/{id}:
  *   put:
  *     summary: Update a review
  *     tags: [Reviews]
@@ -140,11 +114,15 @@ module.exports = router
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: coWorkingId
+ *         required: true
  *         schema:
  *           type: string
+ *       - in: path
+ *         name: id
  *         required: true
- *         description: Review ID
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -158,19 +136,15 @@ module.exports = router
  *                 type: integer
  *     responses:
  *       200:
- *         description: Review updated
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Review'
+ *         description: Updated review
  *       400:
- *         description: Bad request
+ *         description: Validation error
  *       401:
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
  *       404:
- *         description: Review not found
+ *         description: Not found
  *
  *   delete:
  *     summary: Delete a review
@@ -179,28 +153,22 @@ module.exports = router
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: coWorkingId
+ *         required: true
  *         schema:
  *           type: string
+ *       - in: path
+ *         name: id
  *         required: true
- *         description: Review ID
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: Review deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- *                   description: Empty object
+ *         description: Deleted successfully
  *       401:
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
  *       404:
- *         description: Review not found
+ *         description: Not found
  */
