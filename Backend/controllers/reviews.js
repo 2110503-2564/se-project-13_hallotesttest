@@ -140,7 +140,7 @@ exports.deleteReview = async (req, res, next) => {
         message: `User ${req.user.id} is not authorized to delete this review`,
       });
     }
-    const CoWorkingId = review.CoWorkingId;
+    const coWorkingId = review.CoWorkingId;
     const ReviewId = review._id;
     const OldRating = review.rating;
     await review.deleteOne();

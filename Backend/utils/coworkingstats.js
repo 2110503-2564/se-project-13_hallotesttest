@@ -14,7 +14,10 @@ const createAverageRating = async (coWorkingId) => {
     },
   ]);
 
-  const { averageRating = 0, reviewCount = 0 } = result[0] || {};
+  const { averageRating = 0, reviewCount = 0 } = result[0] || {
+    averageRating: 0,
+    reviewCount: 0,
+  };
 
   await CoWorkingStats.findOneAndUpdate(
     { CoWorkingId: coWorkingId },
@@ -39,7 +42,7 @@ const updateDeletedAverageRating = async (coWorkingId, reviewId, oldRating) => {
 
   if (newReviewCount > 0) {
     newAverage =
-      (stats.averageRating * stats.reviewCount - OldRating) / newReviewCount;
+      (stats.averageRating * stats.reviewCount - oldRating) / newReviewCount;
   }
 
   await CoWorkingStats.findOneAndUpdate(
@@ -99,9 +102,10 @@ const updateEditedAverageRating = async (coWorkingId, reviewId, oldRating) => {
   }
 
   let newAverage = 0;
+  const newReviewCount = stats.reviewCount;
 
   newAverage =
-    (stats.averageRating * stats.reviewCount + (review.rating - oldRating)) /
+    (stats.averageRating * stats.reviewCount - oldRating + review.rating) /
     stats.reviewCount;
 
   await CoWorkingStats.findOneAndUpdate(
