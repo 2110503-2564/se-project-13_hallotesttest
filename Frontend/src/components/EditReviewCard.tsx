@@ -8,6 +8,7 @@ import deleteReview from "@/libs/deleteReview";
 import NotiPopup from "./NotiPopup";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useRouter } from "next/navigation";
+import { set } from "mongoose";
 
 export default function EditReviewCard({ review }: { review: RatingItem }) {
   const router = useRouter();
@@ -19,9 +20,11 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
   const [popupMessage, setPopupMessage] = useState("");
   const [popupType, setPopupType] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
+  const [summitting, setSubmitting] = useState(false);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const res = await editReview(
         review._id,
@@ -35,11 +38,13 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
       setPopupMessage("Review updated successfully!");
       setShowPopup(true);
       router.refresh();
+      setSubmitting(false);
     } catch (error) {
       console.error("Error updating review:", error);
       setPopupTitle("Error");
       setPopupMessage("" + error);
       setShowPopup(true);
+      setSubmitting(false);
     }
   };
 
@@ -114,14 +119,17 @@ export default function EditReviewCard({ review }: { review: RatingItem }) {
         </div>
         <div className="ml-auto space-x-2">
           <button
-            className="w-[100px] shadow-xl py-2 bg-white/10 hover:bg-white/30 rounded-lg text-white font-medium transition-colors"
+            className= {summitting ? "w-[100px] shadow-xl py-2 bg-white/5 cursor-not-allowed rounded-lg text-white font-medium transition-colors" 
+              : "w-[100px] shadow-xl py-2 bg-white/10 hover:bg-white/30 rounded-lg text-white font-medium transition-colors"}
             onClick={(e) => {
               handleUpdate(e);
               e.preventDefault();
               e.stopPropagation();
             }}
           >
-            Update
+            {
+                summitting ? "Updating..." : "Update"
+            }
           </button>
           <button
             className="w-[100px] shadow-xl py-2 bg-white/10 hover:bg-white/30 rounded-lg text-white font-medium transition-colors"

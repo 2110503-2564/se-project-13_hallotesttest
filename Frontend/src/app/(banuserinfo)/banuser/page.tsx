@@ -238,15 +238,6 @@ export default function BanUserPage() {
                 handleFilterApply();
               }}
             >
-              Filter
-            </button>
-            <button
-              className="mt-8 mx-5 w-[100px] rounded-md bg-purple-600 px-6 py-3 text-center text-white text-base font-medium shadow-md cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleFilterClose();
-              }}
-            >
               Close
             </button>
           </div>
