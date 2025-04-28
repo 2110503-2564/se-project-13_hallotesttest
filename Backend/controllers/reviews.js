@@ -107,7 +107,11 @@ exports.updateReview = async (req, res, next) => {
       CoWorkingId: review.CoWorkingId,
     });
     if (stats) {
-      await updateEditAverageRating(review.CoWorkingId, review._id, oldRating);
+      await updateEditedAverageRating(
+        review.CoWorkingId,
+        review._id,
+        oldRating
+      );
     } else {
       await createAverageRating(review.CoWorkingId);
     }
@@ -145,12 +149,12 @@ exports.deleteReview = async (req, res, next) => {
     const OldRating = review.rating;
     await review.deleteOne();
     const stats = await CoWorkingStats.findOne({
-      CoWorkingId: review.CoWorkingId,
+      CoWorkingId: coWorkingId,
     });
     if (stats) {
-      await updateDeletedAverageRating(CoWorkingId, ReviewId, OldRating);
+      await updateDeletedAverageRating(coWorkingId, ReviewId, OldRating);
     } else {
-      await createAverageRating(CoWorkingId);
+      await createAverageRating(coWorkingId);
     }
     res.status(200).json({
       success: true,
