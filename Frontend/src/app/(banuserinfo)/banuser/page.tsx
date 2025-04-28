@@ -46,6 +46,7 @@ export default function BanUserPage() {
   const [filterUser, setFilterUser] = useState(false);
   const [filterBanned, setFilterBanned] = useState(false);
   const [filterActive, setFilterActive] = useState(false);
+  const [totalUsers, setTotalUsers] = useState(0);
 
   const handleBanClick = (uid: string) => {
     setSubmittingUserId(uid);
@@ -95,6 +96,7 @@ export default function BanUserPage() {
 
       setUsers(Array.isArray(usersResponse.data) ? usersResponse.data : []);
       setTotalPages(usersResponse.pages || 1);
+      setTotalUsers(usersResponse.total || 0);
 
       setBannedUserIds(
         Array.isArray(bannedUsersResponse.data)
@@ -311,6 +313,13 @@ export default function BanUserPage() {
     return <div className="text-red-500">Error: {error}</div>;
   }
 
+  const totalRows = totalUsers; // 3. Use totalUsers for totalRows
+  const startRow = totalRows === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const endRow =
+    totalRows === 0
+      ? 0
+      : Math.min((currentPage - 1) * itemsPerPage + users.length, totalRows);
+
   return (
     <div className="bg-purple-50 min-h-screen w-full p-8 mx-auto flex flex-col items-center">
       <h1 className="text-2xl font-bold mb-4 text-purple-800 text-center">
@@ -445,7 +454,7 @@ export default function BanUserPage() {
               </option>
             ))}
           </select>
-          <span className="text-gray-600 ">{`1 - 10 of 100 Rows`}</span>
+          <span className="text-gray-600 ">{`${startRow} - ${endRow} of ${totalRows} Rows`}</span>
         </div>
 
         {/* Pagination controls */}
