@@ -115,54 +115,72 @@ describe('Review System Tests', () => {
     expect(res.status).toBe(400);
   });
 
+  
   it('Update by other user', async () => {
     // login as second user
     const alt = await request(app)
-      .post('/api/v1/auth/register')
+    .post('/api/v1/auth/register')
       .send({ name:'Alt',email:'alt@test.com',password:'altalt',role:'user' });
     const altLogin = await request(app)
       .post('/api/v1/auth/login')
       .send({ email:'alt@test.com', password:'altalt' });
-    const altToken = altLogin.body.token;
-    const res = await request(app)
+      const altToken = altLogin.body.token;
+      const res = await request(app)
       .put(`/api/v1/reviews/${reviewId}`)
       .set('Authorization', `Bearer ${altToken}`)
       .send({ comment:'no', rating:2 });
     expect(res.status).toBe(401);
   });
-
+  
   it('Update By Owner', async () => {
     const res = await request(app)
-      .put(`/api/v1/reviews/${reviewId}`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send({ comment:'updated', rating:4 });
+    .put(`/api/v1/reviews/${reviewId}`)
+    .set('Authorization', `Bearer ${userToken}`)
+    .send({ comment:'updated', rating:4 });
     expect(res.status).toBe(200);
     expect(res.body.data.rating).toBe(4);
   });
-
+  
   it('Delete invalid', async () => {
     const res = await request(app)
-      .delete('/api/v1/reviews/123')
+    .delete('/api/v1/reviews/123')
       .set('Authorization', `Bearer ${userToken}`);
     expect(res.status).toBe(400);
   });
-
+  
   it('Delete by other users', async () => {
     const altLogin = await request(app)
-      .post('/api/v1/auth/login')
-      .send({ email:'alt@test.com', password:'altalt' });
+    .post('/api/v1/auth/login')
+    .send({ email:'alt@test.com', password:'altalt' });
     const altToken = altLogin.body.token;
     const res = await request(app)
-      .delete(`/api/v1/reviews/${reviewId}`)
-      .set('Authorization', `Bearer ${altToken}`);
+    .delete(`/api/v1/reviews/${reviewId}`)
+    .set('Authorization', `Bearer ${altToken}`);
     expect(res.status).toBe(401);
   });
-
+  
+  
   it('Delete by owner', async () => {
     const res = await request(app)
-      .delete(`/api/v1/reviews/${reviewId}`)
-      .set('Authorization', `Bearer ${userToken}`);
+    .delete(`/api/v1/reviews/${reviewId}`)
+    .set('Authorization', `Bearer ${userToken}`);
     expect(res.status).toBe(200);
     expect(res.body.data).toEqual({});
   });
+
+  it('Delete Not found', async () => {
+    const res = await request(app)
+    .delete(`/api/v1/reviews/${reviewId}`)
+      .set('Authorization', `Bearer ${userToken}`);
+      expect(res.status).toBe(404);
+    });
+
+  it('Update not Found', async () => {
+    const res = await request(app)
+      .put(`/api/v1/coworkings/${CoWorkingId}/reviews/${reviewId}`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ comment:'x', rating:3 });
+    expect(res.status).toBe(404);
+  });
+    
 });

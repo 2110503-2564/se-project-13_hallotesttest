@@ -63,12 +63,7 @@ exports.addReview = async (req, res, next) => {
       success: true,
       data: review,
     });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Cannot create Review",
-    });
-  }
+  } catch (error) {}
 };
 
 exports.updateReview = async (req, res, next) => {
