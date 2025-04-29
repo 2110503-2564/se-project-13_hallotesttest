@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "node server.js",
-    "test": "newman run postman/banning_reviews_collection.json -e postman/env.json --delay-request 100"
+    "test": "newman run tests/SE13-Test.postman_collection.json -e tests/CoWorking.postman_environment.json --globals tests/workspace.postman_globals.json"
   },
   "author": "",
   "license": "ISC",
