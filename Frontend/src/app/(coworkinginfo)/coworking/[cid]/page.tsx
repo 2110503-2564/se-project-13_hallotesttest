@@ -25,14 +25,8 @@ export default async function CardDetailPage({
     (review: RatingItem) => review.UserId.email === session?.user.email
   );
 
-  const coworkingStat = session?.user?.token
-    ? await getCoworkingStat(session.user.token, params.cid)
-    : null;
+  const coworkingStat = await getCoworkingStat(params.cid);
 
-  // Calculate average score
-  // const averageScore = reviews.data.length > 0
-  //     ? reviews.data.reduce((acc: number, review: { rating: number }) => acc + review.rating, 0) / reviews.data.length
-  //     : 0;
 
   return (
     <main className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 min-h-screen py-12 px-4 sm:px-6">
