@@ -99,21 +99,19 @@ exports.updateReview = async (req, res, next) => {
       });
     }
     const oldRating = review.rating;
+    const coWorkingId = review.CoWorkingId;
+    const reviewId = review._id;
     review = await Review.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
     const stats = await CoWorkingStats.findOne({
-      CoWorkingId: review.CoWorkingId,
+      CoWorkingId: coWorkingId,
     });
     if (stats) {
-      await updateEditedAverageRating(
-        review.CoWorkingId,
-        review._id,
-        oldRating
-      );
+      await updateEditedAverageRating(coWorkingId, reviewId, oldRating);
     } else {
-      await createAverageRating(review.CoWorkingId);
+      await createAverageRating(coWorkingId);
     }
     res.status(200).json({
       success: true,

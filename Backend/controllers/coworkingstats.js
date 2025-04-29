@@ -19,7 +19,7 @@ exports.getStats = async (req, res, next) => {
 
 exports.getStat = async (req, res, next) => {
   let query = CoWorkingStats.find({
-    CoWorkingId: req.params.coWorkingId,
+    CoWorkingId: req.params.id,
   }).populate("CoWorkingId");
   try {
     const coworkingstats = await query;

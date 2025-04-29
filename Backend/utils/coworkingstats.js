@@ -47,7 +47,12 @@ const updateDeletedAverageRating = async (coWorkingId, reviewId, oldRating) => {
 
   await CoWorkingStats.findOneAndUpdate(
     { CoWorkingId: coWorkingId },
-    { averageRating: newAverage, reviewCount: newReviewCount },
+    {
+      $set: {
+        averageRating: newAverage,
+        reviewCount: newReviewCount,
+      },
+    },
     { new: true }
   );
   console.log("yo");
@@ -80,7 +85,12 @@ const updateAddedAverageRating = async (coWorkingId, reviewId) => {
 
   await CoWorkingStats.findOneAndUpdate(
     { CoWorkingId: coWorkingId },
-    { averageRating: newAverage, reviewCount: newReviewCount },
+    {
+      $set: {
+        averageRating: newAverage,
+        reviewCount: newReviewCount,
+      },
+    },
     { new: true }
   );
 
@@ -110,7 +120,12 @@ const updateEditedAverageRating = async (coWorkingId, reviewId, oldRating) => {
 
   await CoWorkingStats.findOneAndUpdate(
     { CoWorkingId: coWorkingId },
-    { averageRating: newAverage, reviewCount: newReviewCount },
+    {
+      $set: {
+        averageRating: newAverage,
+        reviewCount: newReviewCount,
+      },
+    },
     { new: true }
   );
 
