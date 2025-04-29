@@ -2,13 +2,23 @@ const request = require('supertest');
 const app = require('../server');
 const mongoose = require('mongoose');
 const Review = require('../models/Review');
+const CoWorkingStats = require('../models/CoWorkingStats');
+const CoWorking = require('../models/CoWorking.js');
+const {
+  createAverageRating,
+  updateAddedAverageRating,
+  updateDeletedAverageRating,
+  updateEditedAverageRating,
+} = require("../utils/coworkingstats");
+
 describe('Review System Tests', () => {
   let adminToken;
   let userToken;
   let userId;
   let CoWorkingId;
   let reviewId;
-
+  let CoWorkingId2;
+  let reviewId2;
   beforeAll(async () => {
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGO_URI);
@@ -75,6 +85,7 @@ describe('Review System Tests', () => {
     expect(res.body.success).toBe(true);
     reviewId = res.body.data._id;
   });
+
 
   it('Create Review : Error', async () => {
     const res = await request(app)
@@ -180,11 +191,30 @@ describe('Review System Tests', () => {
     expect(res.status).toBe(404);
   });
 
+  it('Call updateAddedAverageRating and update stats when a review is created', async () => {
+    // Create a new review
+    const res = await request(app)
+      .post(`/api/v1/coworkings/${CoWorkingId}/reviews`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ comment: 'Great place', rating: 5 });
+
+    expect(res.status).toBe(201);
+    expect(res.body.success).toBe(true);
+
+    const statsRes = await request(app)
+      .get(`/api/v1/stats/${CoWorkingId}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(statsRes.status).toBe(200);
+    expect(statsRes.body.data[0].averageRating).toBe(5);
+    expect(statsRes.body.data[0].reviewCount).toBe(1);
+  });
+  
   it('Delete CoWorking',async () => {
     const res = await request(app)
     .delete(`/api/v1/coworkings/${CoWorkingId}`)
     .set('Authorization',`Bearer ${adminToken}`);
     expect(res.status).toBe(200);
   })
-    
+  
 });

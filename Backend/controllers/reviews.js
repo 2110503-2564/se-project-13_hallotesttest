@@ -94,9 +94,7 @@ exports.updateReview = async (req, res, next) => {
     });
     if (stats) {
       await updateEditedAverageRating(coWorkingId, reviewId, oldRating);
-    } else {
-      await createAverageRating(coWorkingId);
-    }
+    } 
     res.status(200).json({
       success: true,
       data: review,
@@ -135,9 +133,7 @@ exports.deleteReview = async (req, res, next) => {
     });
     if (stats) {
       await updateDeletedAverageRating(coWorkingId, ReviewId, OldRating);
-    } else {
-      await createAverageRating(coWorkingId);
-    }
+    } 
     res.status(200).json({
       success: true,
       data: {},
