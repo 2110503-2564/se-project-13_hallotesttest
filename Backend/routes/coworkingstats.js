@@ -14,7 +14,7 @@ router.route("/").get(protect, getStats);
 
 router
   .route("/:id")
-  .get(protect, getStat)
+  .get(getStat)
   .delete(protect, authorize("admin"), deleteStat);
 
 module.exports = router;

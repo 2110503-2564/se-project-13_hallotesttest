@@ -16,12 +16,7 @@ exports.getBannedUsers = async (req, res, next) => {
       count: bannedUsers.length,
       data: bannedUsers
     });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: 'Error retrieving banned users'
-    });
-  }
+  } catch (err) {}
 };
 
 // @desc    Get a banned user by ID

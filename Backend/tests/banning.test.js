@@ -88,7 +88,7 @@ describe('Banning API Test', () => {
 
   it('List all banned users : error',async () => {
         const res = await request(app)
-        .get('/api/v1/banned/...')
+        .get('/api/v1/banned/1123344524')
         .set('Authorization',`Bearer ${adminToken}`);
         expect(res.status).toBe(500);
    });
@@ -116,5 +116,19 @@ describe('Banning API Test', () => {
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
     expect(res.body.data).toEqual({});
+  });
+
+  it('Unban user : Not found', async () => {
+    const res = await request(app)
+      .delete(`/api/v1/banned/${userId}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(404);
+  });
+
+  it('Unban user : Error', async () => {
+    const res = await request(app)
+      .delete(`/api/v1/banned/1234567890`)
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(500);
   });
 });

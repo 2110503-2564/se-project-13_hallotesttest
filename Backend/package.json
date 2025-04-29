@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node server.js",
     "newman-test": "newman run tests/SE13-Test.postman_collection.json -e tests/CoWorking.postman_environment.json --globals tests/workspace.postman_globals.json",
-    "test" : "jest --coverage --watchAll"
+    "test:ban": "jest tests/banning.test.js --coverage --watchAll --collectCoverageFrom=\"controllers/banning.js\"",
+    "test:review" : "jest tests/review.test.js --coverage --watchAll --collectCoverageFrom=\"controllers/reviews.js\""
   },
   "author": "",
   "license": "ISC",
