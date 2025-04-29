@@ -46,9 +46,6 @@ describe('Review System Tests', () => {
   });
 
   afterAll(async () => {
-    await request(app)
-      .delete(`/api/v1/coworkings/${CoWorkingId}`)
-      .set('Authorization', `Bearer ${adminToken}`);
     await mongoose.disconnect();
   });
 
@@ -182,5 +179,12 @@ describe('Review System Tests', () => {
       .send({ comment:'x', rating:3 });
     expect(res.status).toBe(404);
   });
+
+  it('Delete CoWorking',async () => {
+    const res = await request(app)
+    .delete(`/api/v1/coworkings/${CoWorkingId}`)
+    .set('Authorization',`Bearer ${adminToken}`);
+    expect(res.status).toBe(200);
+  })
     
 });
