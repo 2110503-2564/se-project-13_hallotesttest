@@ -31,6 +31,20 @@ const swaggerOptions = {
       version: "1.1.0",
       description: "Co-Working Space reservation API",
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT"
+        }
+      }
+    },
+    security: [
+      {
+        bearerAuth: []
+      }
+    ],
     servers: [
       {
         url: "https://se13-backend.vercel.app",

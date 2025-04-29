@@ -47,6 +47,34 @@ describe('Banning API Test', () => {
     expect(res.body.data.unbanDate).toBe('2099-10-09T17:00:00.000Z');
   });
 
+  it('Update Banned user', async () => {
+    const res = await request(app)
+      .put(`/api/v1/banned/${userId}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ reason:'Violation 2', unbanDate:'2099-10-10T17:00:00.000Z' });
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.user).toBe(userId);
+      expect(res.body.data.reason).toBe('Violation 2');
+      expect(res.body.data.unbanDate).toBe('2099-10-10T17:00:00.000Z');
+  });
+
+  it('Banned User : Not found', async () => {
+    const res = await request(app)
+      .put(`/api/v1/banned/6806054bf9b0f8e89dc2c148`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ reason:'Violation 2', unbanDate:'2099-10-10T17:00:00.000Z' });
+      expect(res.status).toBe(404);
+  });
+
+  it('Banned User : Error', async () => {
+    const res = await request(app)
+      .put(`/api/v1/banned/123345678910`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ reason:'Violation 2', unbanDate:'2099-10-10T17:00:00.000Z' });
+      expect(res.status).toBe(500);
+  });
+
   it('List All banned users', async () => {
     const res = await request(app)
       .get('/api/v1/banned')

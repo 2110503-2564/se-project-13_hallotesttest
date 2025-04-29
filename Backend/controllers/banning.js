@@ -52,47 +52,6 @@ exports.getBannedUser = async (req, res, next) => {
     });
   }
 };
-
-// @desc    Ban a user
-// @route   PUT /api/v1/banned/:id
-// @access  Private/Admin
-exports.banUser = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: `User not found with id of ${req.params.id}`
-      });
-    }
-
-    let bannedUser = await Banned.findOne({ user: req.params.id });
-    
-    if (bannedUser) {
-      return res.status(400).json({
-        success: false,
-        message: `User with ID ${req.params.id} is already banned`
-      });
-    }
-    const { reason, unbanDate} = req.body;
-    bannedUser = await Banned.create({ 
-      user: req.params.id,
-      reason : reason,
-      unbanDate : unbanDate 
-    });
-
-    res.status(200).json({
-      success: true,
-      data: bannedUser
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: 'Error banning user'
-    });
-  }
-};
      
 // @desc    Unban a user
 // @route   DELETE /api/v1/banned/:id
