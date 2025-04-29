@@ -5,3 +5,4 @@ Backend/.vercel
 .vscode/
 package-lock.json
 Backend/coverage
+.env
