@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../server');
 const mongoose = require('mongoose');
-
+const Review = require('../models/Review');
 describe('Review System Tests', () => {
   let adminToken;
   let userToken;
@@ -77,6 +77,14 @@ describe('Review System Tests', () => {
     expect(res.status).toBe(201);
     expect(res.body.success).toBe(true);
     reviewId = res.body.data._id;
+  });
+
+  it('Create Review : Error', async () => {
+    const res = await request(app)
+      .post(`/api/v1/coworkings/${CoWorkingId}/reviews`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ comment:'test', rating:'dsfad' });
+    expect(res.status).toBe(400);
   });
 
   it('Create same Review', async () => {

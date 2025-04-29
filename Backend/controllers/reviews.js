@@ -27,12 +27,7 @@ exports.getReviews = async (req, res, next) => {
       count: reviews.length,
       data: reviews,
     });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      msg: err,
-    });
-  }
+  } catch (error) {}
 };
 
 exports.addReview = async (req, res, next) => {
@@ -44,12 +39,6 @@ exports.addReview = async (req, res, next) => {
       });
     }
     req.body.CoWorkingId = req.params.coWorkingId;
-    if (!req.user.id) {
-      return res.status(404).json({
-        success: false,
-        message: "Invalid User Id",
-      });
-    }
     req.body.UserId = req.user.id;
     const existed = await Review.find({
       CoWorkingId: req.params.coWorkingId,
