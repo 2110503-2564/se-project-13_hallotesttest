@@ -33,7 +33,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "https://se13-backend.vercel.app",
+        url: "http://se13-backend.vercel.app",
       },
     ],
   },
