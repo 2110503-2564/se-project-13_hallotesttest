@@ -5,13 +5,13 @@ import getDirectGoogleDriveUrl from '@/libs/getDirectGoogleDriveUrl'
 import RatingForm from '@/components/RatingForm'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
-import { get } from 'http'
 import getCoworkingRating from '@/libs/getCoworkingRating'
 import ReviewsCard from '@/components/ReviewsCard'
 import EditReviewCard from '@/components/EditReviewCard'
 import Rating from '@mui/material/Rating'
-import Box from '@mui/material/Box'
 import StarIcon from '@mui/icons-material/Star'
+
+import getCoworkingStat from '@/libs/getCoworkingStat'
 
 export default async function CardDetailPage({ params }: { params: { cid: string } }) {
 
@@ -20,10 +20,12 @@ export default async function CardDetailPage({ params }: { params: { cid: string
     const reviews = await getCoworkingRating(params.cid);
     const review = reviews.data.find((review:RatingItem) => review.UserId.email === session?.user.email);
 
+    const coworkingStat = session?.user?.token ? await getCoworkingStat(session.user.token, params.cid) : null;
+
     // Calculate average score
-    const averageScore = reviews.data.length > 0
-        ? reviews.data.reduce((acc: number, review: { rating: number }) => acc + review.rating, 0) / reviews.data.length
-        : 0;
+    // const averageScore = reviews.data.length > 0
+    //     ? reviews.data.reduce((acc: number, review: { rating: number }) => acc + review.rating, 0) / reviews.data.length
+    //     : 0;
 
     return (
         <main className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 min-h-screen py-12 px-4 sm:px-6">
@@ -93,12 +95,12 @@ export default async function CardDetailPage({ params }: { params: { cid: string
                 }
 
                 {
-                    reviews.data.length > 0 ? (
+                    coworkingStat.data[0].reviewCount > 0 ? (
                         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 shadow-xl h-full top-6 mt-6">
                             {/* Score and review count row */}
                             <div className="flex items-end justify-between">
                                 <div className="flex items-end gap-2">
-                                    <span className="text-6xl font-bold text-white">{averageScore.toFixed(1)}</span>
+                                    <span className="text-6xl font-bold text-white">{coworkingStat.data[0].averageRating.toFixed(1)}</span>
                                     <span className="text-xl text-white mb-2">/5</span>
                                 </div>
                                 <span className="text-6xl text-white font-bold mb-2">{reviews.data.length}</span>
@@ -107,7 +109,7 @@ export default async function CardDetailPage({ params }: { params: { cid: string
 
                                 <Rating
                                     name="average-rating"
-                                    value={averageScore}
+                                    value={coworkingStat.data[0].averageRating}
                                     precision={0.1}
                                     readOnly
                                     size="large"
