@@ -1,0 +1,51 @@
+{
+	"id": "99110eef-760b-4831-8974-2d815b23869f",
+	"values": [
+		{
+			"key": "admin_email",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "admin_password",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "user_email",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "user_password",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "CoWorkingID",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "ReviewID",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"name": "Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2025-04-29T07:25:10.105Z",
+	"_postman_exported_using": "Postman/11.43.0"
+}
