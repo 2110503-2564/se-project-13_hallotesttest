@@ -6,6 +6,7 @@ describe('Banning API Test', () => {
   let adminToken;
   let userId;
   let userToken;
+  let banId;
   beforeAll(async () => {
     // connect to test database if needed
     if (mongoose.connection.readyState === 0) {
@@ -38,6 +39,7 @@ describe('Banning API Test', () => {
       .put(`/api/v1/banned/${userId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({ reason:'Violation', unbanDate:'2099-10-09T17:00:00.000Z' });
+    banId = res.body.data._id;
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
     expect(res.body.data.user).toBe(userId);
@@ -58,11 +60,27 @@ describe('Banning API Test', () => {
 
   it('List all banned users : error',async () => {
         const res = await request(app)
-        .get('/api/v1/banned/')
-        .set('Authorization',`Bearer 123456789`);
+        .get('/api/v1/banned/...')
+        .set('Authorization',`Bearer ${adminToken}`);
         expect(res.status).toBe(500);
    });
 
+   it('List 1 banned user',async () => {
+    const res = await request(app)
+    .get(`/api/v1/banned/${banId}`)
+    .set('Authorization',`Bearer ${adminToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body.data._id).toBe(banId);
+    expect(res.body.data.user._id).toBe(userId);
+    });
+    
+    it('List 1 banned user : Not found',async () => {
+    const res = await request(app)
+    .get(`/api/v1/banned/${userId}`)
+    .set('Authorization',`Bearer ${adminToken}`);
+    expect(res.status).toBe(404);
+    });
+    
   it('Unban user', async () => {
     const res = await request(app)
       .delete(`/api/v1/banned/${userId}`)
