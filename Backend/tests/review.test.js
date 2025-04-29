@@ -94,6 +94,11 @@ describe('Review System Tests', () => {
     expect(res.body.count).toBe(1);
   });
 
+  it('List all reviews', async () => {
+    const res = await request(app).get(`/api/v1/reviews`);
+    expect(res.status).toBe(200);
+  });
+
   it('Error Update', async () => {
     const res = await request(app)
       .put('/api/v1/coworkings/invalid/reviews/123')

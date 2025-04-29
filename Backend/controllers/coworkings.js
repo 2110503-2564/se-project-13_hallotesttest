@@ -1,7 +1,7 @@
 const Reservation = require('../models/Reservation.js');
 const CoWorking = require('../models/CoWorking.js');
 const Review = require('../models/Review');
-const CoWorkingStat = require('../models/CoWorkingStats.js');
+const CoWorkingStats = require('../models/CoWorkingStats.js');
 exports.getCoWorkings = async (req, res, next) => {
     try {
         let query;
